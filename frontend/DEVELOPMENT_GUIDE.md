@@ -37,7 +37,7 @@ export default function ComponentName({ prop1, prop2, onCallback }) {
   // Render
   return (
     <div>
-      {/* JSX content */}
+      {/* JSX content */} 
     </div>
   );
 }
