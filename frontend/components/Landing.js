@@ -134,8 +134,5 @@ export default function Landing({ onGetStarted }) {
         </div>
       </div>
     </div>
-}
-const randomRoom = () => `room-${Math.random().toString(36).slice(2, 8)}`;
-import { useRouter } from 'next/navigation';
   );
 }
