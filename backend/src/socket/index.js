@@ -3,6 +3,20 @@ import redisClient from '../services/redis.js';
 import config from '../config/index.js';
 import { v4 as uuidv4 } from 'uuid';
 
+function extractRoomIdFromReferer(referer) {
+  if (!referer) return null;
+  try {
+    const url = new URL(referer);
+    const parts = url.pathname.split('/room/');
+    if (parts.length > 1 && parts[1]) {
+      return parts[1].replace(/\/+$/, '');
+    }
+  } catch (error) {
+    console.error('Failed to parse referer for room id:', error);
+  }
+  return null;
+}
+
 class SocketHandler {
   constructor() {
     this.io = null;
@@ -36,7 +50,12 @@ class SocketHandler {
     // Join a room
     socket.on('join-room', async (data) => {
       try {
-        const { roomId, user } = data;
+        let { roomId, user } = data || {};
+
+        // Fallback: derive roomId from referer /room/<id>
+        if (!roomId) {
+          roomId = extractRoomIdFromReferer(socket.handshake.headers?.referer);
+        }
         
         if (!roomId || !user || !user.email || !user.name) {
           socket.emit('error', { message: 'Invalid room or user data' });
@@ -62,10 +81,6 @@ class SocketHandler {
         // Track room membership
         this.addUserToRoom(roomId, currentUser);
 
-        // Get user's message count
-        const userMessageCount = await redisClient.getUserMessageCount(user.email);
-        const isUserLimitReached = userMessageCount >= config.chat.maxMessagesPerRoom;
-
         // Get current message count and room stats
         const messageCount = await redisClient.getMessageCount(roomId);
         const isLimitReached = messageCount >= config.chat.maxMessagesPerRoom;
@@ -74,8 +89,6 @@ class SocketHandler {
         // Send room data to the user
         socket.emit('room-joined', {
           roomId,
-          userMessageCount,
-          isUserLimitReached,
           messageCount,
           maxMessages: config.chat.maxMessagesPerRoom,
           isLimitReached,
@@ -111,13 +124,12 @@ class SocketHandler {
           return;
         }
 
-        // Check user's message count (per-user limit)
-        const userCount = await redisClient.getUserMessageCount(currentUser.email);
-        
-        if (userCount >= config.chat.maxMessagesPerRoom) {
+        // Check room message count (per-room limit)
+        const currentRoomCount = await redisClient.getMessageCount(currentRoom);
+        if (currentRoomCount >= config.chat.maxMessagesPerRoom) {
           socket.emit('limit-reached', {
-            message: 'Your message limit has been reached',
-            userMessageCount: userCount,
+            message: 'Room message limit reached',
+            messageCount: currentRoomCount,
             maxMessages: config.chat.maxMessagesPerRoom,
           });
           return;
@@ -136,9 +148,7 @@ class SocketHandler {
           timestamp: new Date().toISOString(),
         };
 
-        // Increment user's message count in Redis
-        const userMessageCount = await redisClient.incrementUserMessageCount(currentUser.email);
-        // Also increment room count for room stats
+        // Increment room message count in Redis
         const roomMessageCount = await redisClient.incrementMessageCount(currentRoom);
 
         // Store message in Redis
@@ -147,22 +157,21 @@ class SocketHandler {
         // Broadcast message to all users in the room
         this.io.to(currentRoom).emit('new-message', {
           message,
-          userMessageCount,
           roomMessageCount,
           messageCount: roomMessageCount,
           maxMessages: config.chat.maxMessagesPerRoom,
         });
 
-        // Check if user limit is reached
-        if (userMessageCount >= config.chat.maxMessagesPerRoom) {
+        // Check if room limit is reached
+        if (roomMessageCount >= config.chat.maxMessagesPerRoom) {
           this.io.to(currentRoom).emit('limit-reached', {
-            message: 'User has reached the 50-message limit',
-            userMessageCount,
+            message: 'Room has reached the 50-message limit',
+            messageCount: roomMessageCount,
             maxMessages: config.chat.maxMessagesPerRoom,
           });
         }
 
-        console.log(`Message from ${currentUser.email} in room ${currentRoom}: user count ${userMessageCount}/${config.chat.maxMessagesPerRoom}`);
+        console.log(`Message in room ${currentRoom}: count ${roomMessageCount}/${config.chat.maxMessagesPerRoom}`);
       } catch (error) {
         console.error('Error in send-message:', error);
         socket.emit('error', { message: 'Failed to send message' });

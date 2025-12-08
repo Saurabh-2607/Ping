@@ -4,7 +4,6 @@ import { io } from 'socket.io-client';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 /**
- * Custom hook for managing Socket.IO connection
  * @param {string} roomId - The room to join
  * @param {object} user - User object with email and name
  * @param {function} onConnect - Callback when connected

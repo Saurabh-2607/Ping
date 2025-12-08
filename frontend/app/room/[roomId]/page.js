@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import AuthScreen from '@/components/AuthScreen';
 import ChatScreen from '@/components/ChatScreen';
 import { validateSession } from '@/lib/api';
 
-export default function RoomPage({ params }) {
+export default function RoomPage() {
+  const params = useParams();
   const roomId = params?.roomId || 'default';
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sessionData, setSessionData] = useState(null);

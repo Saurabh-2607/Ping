@@ -30,6 +30,12 @@ This is a real-time chat application backend built with:
 - Session management with Redis
 - Dual storage: Redis (fast) + Convex (persistent)
 
+### URL-Based Rooms
+- Room name is everything after `/room/` in the URL (e.g., `/room/project-alpha` → `project-alpha`)
+- Users visiting the same `/room/<name>` path join the same room automatically
+- Socket connections can omit `roomId`; the server infers it from the HTTP referer path `/room/<name>` during the Socket.IO handshake
+- Single global namespace; no room picker UI required
+
 ---
 
 ## Setup Instructions
@@ -140,7 +146,7 @@ Server will start at `http://localhost:3000`
 1. **Authentication**: Frontend → REST API → Redis (OTP) → Resend (Email)
 2. **Join Room**: Frontend → Socket.IO → Redis (count) → Frontend
 3. **Send Message**: Frontend → Socket.IO → Redis → Convex → Broadcast to all clients
-4. **Message Limit**: Redis counter reaches 50 → Trigger limit-reached event
+4. **Message Limit**: Redis room counter reaches 50 → Trigger limit-reached event
 
 ---
 
@@ -477,7 +483,8 @@ socket.on('new-message', (data) => {
       },
       timestamp: '2025-12-07T10:00:00.000Z'
     },
-    messageCount: 24,
+    roomMessageCount: 24,
+    messageCount: 24, // alias
     maxMessages: 50
   }
   */
@@ -503,9 +510,10 @@ socket.on('limit-reached', (data) => {
   */
   
   // Frontend should:
-  // 1. Disable chat input
-  // 2. Show full-screen modal overlay
-  // 3. Display upgrade message
+  // 1. Disable chat input (block further sends)
+  // 2. Show full-screen modal overlay that blocks the UI (no close X)
+  // 3. Display upgrade message and keep overlay until plan/credits change
+  // 4. Provide a button (e.g., "Buy credits") that can log/Toast for now
 });
 ```
 
@@ -756,6 +764,9 @@ socket.on('error', (data) => {
       socket.on('room-joined', (data) => {
         console.log('Joined room:', data);
         updateProgress(data.messageCount, data.maxMessages);
+        if (data.isLimitReached) {
+          lockChat();
+        }
         
         // Display existing messages
         data.messages.forEach(msg => displayMessage(msg));
@@ -764,11 +775,14 @@ socket.on('error', (data) => {
       socket.on('new-message', (data) => {
         displayMessage(data.message);
         updateProgress(data.messageCount, data.maxMessages);
+        if (data.messageCount >= data.maxMessages) {
+          lockChat();
+        }
       });
 
-      socket.on('limit-reached', () => {
-        document.getElementById('message-input').disabled = true;
-        document.getElementById('limit-modal').style.display = 'flex';
+      socket.on('limit-reached', (data) => {
+        console.log('limit-reached', data);
+        lockChat();
       });
 
       socket.on('user-joined', (data) => {
@@ -803,7 +817,7 @@ socket.on('error', (data) => {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
 
-      if (text && socket) {
+      if (text && socket && !input.disabled) {
         socket.emit('send-message', { text });
         input.value = '';
         socket.emit('stop-typing');
@@ -826,6 +840,12 @@ socket.on('error', (data) => {
       const percentage = (count / max) * 100;
       document.getElementById('progress-bar').style.width = percentage + '%';
       document.getElementById('message-count').textContent = `${count} / ${max}`;
+    }
+
+    function lockChat() {
+      const input = document.getElementById('message-input');
+      input.disabled = true;
+      document.getElementById('limit-modal').style.display = 'flex';
     }
 
     function buyCredits() {

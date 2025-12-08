@@ -20,8 +20,8 @@ export default function LimitReachedModal({ messageCount, maxMessages }) {
               />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">Free Tier Completed!</h2>
-          <p className="text-indigo-100">You've reached your 50-message personal limit</p>
+          <h2 className="text-3xl font-bold text-white mb-2">Room Limit Reached!</h2>
+          <p className="text-indigo-100">This room has hit the {maxMessages}-message limit</p>
         </div>
 
         {/* Content */}
@@ -29,11 +29,11 @@ export default function LimitReachedModal({ messageCount, maxMessages }) {
           {/* Message stats */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <div className="flex items-center justify-between">
-              <span className="text-gray-700 font-medium">Messages sent:</span>
+              <span className="text-gray-700 font-medium">Total messages:</span>
               <span className="text-2xl font-bold text-indigo-600">{messageCount}</span>
             </div>
             <div className="flex items-center justify-between mt-3">
-              <span className="text-gray-700 font-medium">Limit:</span>
+              <span className="text-gray-700 font-medium">Room Limit:</span>
               <span className="text-2xl font-bold text-gray-900">{maxMessages}</span>
             </div>
           </div>
@@ -66,15 +66,15 @@ export default function LimitReachedModal({ messageCount, maxMessages }) {
           {/* Buttons */}
           <button
             onClick={handleUpgrade}
-            className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-lg hover:shadow-lg transition duration-200 mb-3"
+            className="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-200 transition-all duration-200 mb-3 transform hover:-translate-y-0.5"
           >
             Upgrade Now
           </button>
           <button
             onClick={() => window.location.reload()}
-            className="w-full py-2 px-4 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition duration-200"
+            className="w-full py-3 px-4 text-gray-600 font-semibold rounded-xl hover:bg-gray-50 transition duration-200"
           >
-            Refresh
+            Refresh Page
           </button>
         </div>
       </div>

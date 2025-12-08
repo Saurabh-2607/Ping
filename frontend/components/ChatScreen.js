@@ -10,8 +10,6 @@ import LimitReachedModal from './LimitReachedModal';
 import ProgressBar from './ProgressBar';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-const PER_USER_LIMIT = 50;
-const userCountKey = (email, roomId) => `userMessageCount:${email}:${roomId}`;
 
 export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoomId }) {
   const router = useRouter();
@@ -25,7 +23,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const [isTyping, setIsTyping] = useState(false);
   const [otherUsersTyping, setOtherUsersTyping] = useState([]);
   const [roomMessageCount, setRoomMessageCount] = useState(0);
-  const [myMessageCount, setMyMessageCount] = useState(0);
+  const [maxMessages, setMaxMessages] = useState(50);
   const [isLimitReached, setIsLimitReached] = useState(false);
   const [activeUsers, setActiveUsers] = useState([]);
   const [error, setError] = useState('');
@@ -48,12 +46,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  useEffect(() => {
-    if (myMessageCount >= PER_USER_LIMIT) {
-      setIsLimitReached(true);
-    }
-  }, [myMessageCount]);
 
   // Initialize Socket.IO connection
   useEffect(() => {
@@ -85,36 +77,25 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
       console.log('Joined room:', data);
       setMessages(data.messages || []);
       setRoomMessageCount(data.messageCount || 0);
-      const ownMessages = (data.messages || []).filter(
-        (m) => m?.user?.email === sessionData.email
-      ).length;
-      const storedCount = Number(localStorage.getItem(userCountKey(sessionData.email, roomId)));
-      const initialMyCount = Number.isFinite(storedCount) ? storedCount : ownMessages;
-      setMyMessageCount(initialMyCount);
-      setIsLimitReached(initialMyCount >= PER_USER_LIMIT);
-      localStorage.setItem(userCountKey(sessionData.email, roomId), String(initialMyCount));
+      setMaxMessages(data.maxMessages || 50);
+      setIsLimitReached(data.isLimitReached || false);
       setActiveUsers(data.activeUsers || []);
     });
 
     newSocket.on('new-message', (data) => {
       setMessages((prev) => [...prev, data.message]);
       setRoomMessageCount(data.messageCount || 0);
-
-      if (data.message?.user?.email === sessionData.email) {
-        setMyMessageCount((prev) => {
-          const next = prev + 1;
-          localStorage.setItem(userCountKey(sessionData.email, roomId), String(next));
-          if (next >= PER_USER_LIMIT) {
-            setIsLimitReached(true);
-          }
-          return next;
-        });
+      setMaxMessages(data.maxMessages || 50);
+      
+      if (data.messageCount >= data.maxMessages) {
+        setIsLimitReached(true);
       }
     });
 
     newSocket.on('limit-reached', (data) => {
       setIsLimitReached(true);
       setRoomMessageCount(data.messageCount || roomMessageCount);
+      setMaxMessages(data.maxMessages || maxMessages);
     });
 
     newSocket.on('user-joined', (data) => {
@@ -161,7 +142,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const handleSendMessage = (e) => {
     e.preventDefault();
 
-    if (!messageInput.trim() || !socket || isLimitReached || myMessageCount >= PER_USER_LIMIT) {
+    if (!messageInput.trim() || !socket || isLimitReached) {
       return;
     }
 
@@ -182,7 +163,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const handleInputChange = (e) => {
     setMessageInput(e.target.value);
 
-    if (!isTyping && socket && !isLimitReached && myMessageCount < PER_USER_LIMIT) {
+    if (!isTyping && socket && !isLimitReached) {
       setIsTyping(true);
       socket.emit('typing');
     }
@@ -227,39 +208,44 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 rounded-lg">
-              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <header className="bg-white shadow-sm border-b border-gray-200 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-indigo-600 rounded-lg shadow-md shadow-indigo-200">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Chat App</h1>
-              <p className="text-sm text-gray-600">Room: <span className="font-semibold text-indigo-600">{roomId}</span></p>
+              <h1 className="text-xl font-bold text-gray-900">Chat App</h1>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-500">Room:</span>
+                <span className="font-mono font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{roomId}</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="font-semibold text-gray-900">{sessionData.name}</p>
-              <p className="text-sm text-gray-600">{sessionData.email}</p>
+          <div className="flex items-center gap-6">
+            <div className="hidden md:block text-right">
+              <p className="text-sm font-semibold text-gray-900">{sessionData.name}</p>
+              <p className="text-xs text-gray-500">{sessionData.email}</p>
             </div>
-            <button
-              onClick={handleNewRoom}
-              className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition duration-200 text-sm font-medium"
-            >
-              New Room
-            </button>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 text-sm font-medium"
-            >
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleNewRoom}
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition duration-200 text-sm font-medium shadow-sm"
+              >
+                New Room
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 hover:border-red-200 transition duration-200 text-sm font-medium"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -271,17 +257,20 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
         </div>
       )}
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden max-w-5xl mx-auto w-full bg-white shadow-xl my-4 rounded-2xl border border-gray-200">
         {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto bg-white bg-opacity-70 p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50">
           {messages.length === 0 ? (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center">
-                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="h-full flex flex-col items-center justify-center text-center p-8">
+              <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
+                <svg className="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-                <p className="text-gray-500 text-lg">No messages yet. Start the conversation!</p>
               </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No messages yet</h3>
+              <p className="text-gray-500 max-w-sm">
+                Be the first to break the silence! Start the conversation by typing a message below.
+              </p>
             </div>
           ) : (
             <>
@@ -296,30 +285,36 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
           )}
 
           {/* Typing Indicator */}
-          {otherUsersTyping.length > 0 && <TypingIndicator users={otherUsersTyping} />}
+          {otherUsersTyping.length > 0 && (
+            <div className="ml-4">
+              <TypingIndicator users={otherUsersTyping} />
+            </div>
+          )}
 
           <div ref={messagesEndRef} />
         </div>
 
         {/* Progress Bar */}
-        <ProgressBar
-          messageCount={myMessageCount}
-          maxMessages={PER_USER_LIMIT}
-          label="Your free-tier messages"
-        />
+        <div className="bg-white border-t border-gray-100 px-6 py-2">
+          <ProgressBar
+            messageCount={roomMessageCount}
+            maxMessages={maxMessages}
+            label="Room Message Limit"
+          />
+        </div>
 
         {/* Active Users */}
         {activeUsers.length > 0 && (
-          <div className="bg-white border-t border-gray-200 px-6 py-3">
-            <p className="text-sm font-semibold text-gray-700 mb-2">Active Users ({activeUsers.length})</p>
-            <div className="flex flex-wrap gap-2">
+          <div className="bg-gray-50 border-t border-gray-200 px-6 py-2 flex items-center gap-3 overflow-x-auto">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Active now:</span>
+            <div className="flex items-center gap-2">
               {activeUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium flex items-center gap-2"
+                  className="flex items-center gap-1.5 px-2 py-1 bg-white border border-gray-200 rounded-full shadow-sm"
                 >
-                  <span className="w-2 h-2 bg-indigo-600 rounded-full"></span>
-                  {user.name}
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  <span className="text-xs font-medium text-gray-700">{user.name}</span>
                 </div>
               ))}
             </div>
@@ -327,26 +322,40 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
         )}
 
         {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 p-6">
+        <div className="bg-white border-t border-gray-200 p-4 sm:p-6">
           {isLimitReached ? (
-            <div className="text-center py-4 bg-red-50 rounded-lg border border-red-200">
-              <p className="text-red-800 font-semibold">50-message personal limit reached</p>
-              <p className="text-red-600 text-sm mt-1">Upgrade your plan to continue chatting</p>
+            <div className="flex items-center justify-center p-6 bg-red-50 rounded-xl border border-red-100">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mb-3">
+                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-red-900 mb-1">Limit Reached</h3>
+                <p className="text-red-700">This room has hit the {maxMessages}-message limit.</p>
+              </div>
             </div>
           ) : (
-            <form onSubmit={handleSendMessage} className="flex gap-3">
-              <input
-                type="text"
-                value={messageInput}
-                onChange={handleInputChange}
-                placeholder="Type your message..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                disabled={!socket}
-              />
+            <form onSubmit={handleSendMessage} className="flex gap-3 items-end">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={handleInputChange}
+                  placeholder="Type your message..."
+                  className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 pr-12"
+                  disabled={!socket}
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
               <button
                 type="submit"
-                disabled={!socket || !messageInput.trim() || myMessageCount >= PER_USER_LIMIT}
-                className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-200 flex items-center gap-2"
+                disabled={!socket || !messageInput.trim() || isLimitReached}
+                className="px-6 py-3.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200 flex items-center gap-2"
               >
                 <span>Send</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -360,7 +369,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
       {/* Limit Reached Modal */}
       {isLimitReached && (
-        <LimitReachedModal messageCount={myMessageCount} maxMessages={PER_USER_LIMIT} />
+        <LimitReachedModal messageCount={roomMessageCount} maxMessages={maxMessages} />
       )}
     </div>
   );

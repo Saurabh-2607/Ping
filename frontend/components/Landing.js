@@ -12,6 +12,13 @@ export default function Landing({ onGetStarted }) {
     router.push(`/room/${room}`);
   };
 
+  const handleGetStarted = () => {
+    if (onGetStarted) {
+      onGetStarted();
+    }
+    router.push('/login');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 text-gray-900">
       <div className="max-w-6xl mx-auto px-6 py-12 lg:py-20">
@@ -30,20 +37,20 @@ export default function Landing({ onGetStarted }) {
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <button
-                onClick={onGetStarted}
-                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg shadow-indigo-200 transition"
+                onClick={handleGetStarted}
+                className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-200 transition-all duration-200 hover:-translate-y-0.5"
               >
                 Get Started
               </button>
               <button
                 onClick={handleCreateRoom}
-                className="px-6 py-3 bg-white border border-indigo-300 hover:border-indigo-500 text-indigo-700 font-semibold rounded-lg shadow-sm transition"
+                className="px-8 py-4 bg-white border border-indigo-100 hover:border-indigo-300 text-indigo-700 font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
               >
                 Create New Room
               </button>
               <a
                 href="#features"
-                className="px-6 py-3 border border-gray-300 hover:border-indigo-400 text-gray-800 font-semibold rounded-lg transition"
+                className="px-8 py-4 border border-gray-200 hover:border-gray-300 text-gray-600 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-200"
               >
                 See Features
               </a>
@@ -59,7 +66,7 @@ export default function Landing({ onGetStarted }) {
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-purple-500 rounded-full" />
-                50-message progress tracking
+                50-message room limit
               </div>
             </div>
           </div>
@@ -96,7 +103,7 @@ export default function Landing({ onGetStarted }) {
               </li>
             </ul>
             <button
-              onClick={onGetStarted}
+              onClick={handleGetStarted}
               className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition"
             >
               Get Started Now
