@@ -20,7 +20,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+    <div className="h-full w-full flex flex-col overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
       <Container className="flex flex-1 overflow-hidden">
         {/* Left Section */}
         <div className="w-full lg:w-1/2 pr-8 flex flex-col items-start relative overflow-hidden">
@@ -66,7 +66,7 @@ export default function Home() {
         </div>
 
         {/* Right Section */}
-        <div className="hidden lg:flex w-1/2 relative flex-col items-end justify-start dark:bg-gray-800">  
+        <div className="hidden lg:flex w-1/2 relative flex-col items-end justify-start dark:bg-black">  
           <Image
           src="/landing.png"
           alt='Landing Image'

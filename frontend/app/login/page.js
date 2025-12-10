@@ -120,10 +120,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-full w-full flex overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+    <div className="h-full w-full flex overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
       <Container className="flex flex-1 overflow-hidden">
         {/* Left Section - Image */}
-        <div className="hidden lg:flex w-1/2 relative flex-col items-end justify-start dark:bg-gray-800">
+        <div className="hidden lg:flex w-1/2 relative flex-col items-end justify-start dark:bg-black">
           <Image
             src="/landing.png"
             alt='Login Image'
@@ -180,7 +180,7 @@ export default function LoginPage() {
                     placeholder="you@example.com"
                     className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${
                       theme === 'dark'
-                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
+                        ? 'bg-black border-gray-700 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     disabled={isLoading}
@@ -201,7 +201,7 @@ export default function LoginPage() {
                     placeholder="John Doe"
                     className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${
                       theme === 'dark'
-                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
+                        ? 'bg-black border-gray-700 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     disabled={isLoading}
@@ -248,7 +248,7 @@ export default function LoginPage() {
                     placeholder="000000"
                     className={`w-full px-4 py-3 border text-center text-2xl tracking-[0.5em] font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 font-mono ${
                       theme === 'dark'
-                        ? 'bg-gray-700 border-gray-600 text-indigo-400 placeholder-gray-500 focus:bg-gray-600'
+                        ? 'bg-black border-gray-700 text-indigo-400 placeholder-gray-500 focus:bg-black'
                         : 'bg-gray-50 border-gray-200 text-indigo-600 focus:bg-white'
                     }`}
                     disabled={isLoading}

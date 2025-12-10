@@ -263,7 +263,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   if (isLoading) {
     return (
       <Container fullHeight className={`flex items-center justify-center ${
-        theme === 'dark' ? 'bg-gray-900' : 'bg-white'
+        theme === 'dark' ? 'bg-black' : 'bg-white'
       }`}>
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -282,11 +282,11 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
         </div>
       )}
 
-      <div className="flex flex-1 min-h-0 overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div className="flex flex-1 min-h-0 overflow-hidden border border-gray-200 dark:border-white/15">
         {/* Sidebar */}
-        <aside className={`${isSidebarOpen ? 'w-64' : 'w-0'} shrink-0 transition-all duration-300 overflow-hidden bg-white dark:bg-gray-900 flex flex-col border-r border-gray-200 dark:border-gray-700`}>
+        <aside className={`${isSidebarOpen ? 'w-64' : 'w-0'} shrink-0 transition-all duration-300 overflow-hidden bg-white dark:bg-black flex flex-col border-r border-gray-200 dark:border-white/15`}>
           {/* User Info Section */}
-          <div className="shrink-0 p-5 border-b border-gray-200 dark:border-gray-700">
+          <div className="shrink-0 p-5 border-b border-gray-200 dark:border-white/15">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-base">
                 {sessionData?.name?.charAt(0).toUpperCase() || 'U'}
@@ -334,7 +334,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                     className={`w-full px-5 py-2.5 text-sm transition-all cursor-pointer flex items-center justify-between gap-2 ${
                       isActive
                         ? 'bg-emerald-500/20 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-300'
+                        : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-900 dark:text-gray-300'
                     }`}
                   >
                     <p className="font-semibold text-sm truncate">{currentRoomId}</p>
@@ -349,7 +349,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
           {/* Create Room Section - Now at Bottom */}
           {!isCreatingRoom ? (
-            <div className="shrink-0 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+            <div className="shrink-0 px-4 py-3 border-t border-gray-200 dark:border-white/15">
               <Button
                 onClick={() => setIsCreatingRoom(true)}
                 variant="accent"
@@ -363,13 +363,13 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
               </Button>
             </div>
           ) : (
-            <div className="shrink-0 px-4 py-3 space-y-2 border-t border-gray-200 dark:border-gray-700">
+            <div className="shrink-0 px-4 py-3 space-y-2 border-t border-gray-200 dark:border-white/15">
               <input
                 type="text"
                 placeholder="Room name (optional)"
                 value={newRoomName}
                 onChange={(e) => setNewRoomName(e.target.value)}
-                className="w-full px-3 py-2 border bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-500 dark:focus:ring-white/20 dark:focus:border-white text-sm"
+                className="w-full px-3 py-2 border bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 dark:bg-black dark:border-white/15 dark:text-white dark:placeholder-gray-500 dark:focus:ring-white/20 dark:focus:border-white text-sm"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     handleCreateRoom();
@@ -402,20 +402,20 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
         </aside>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden transition-colors duration-300 bg-white dark:bg-gray-800">
+        <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden transition-colors duration-300 bg-white dark:bg-black">
           {/* Chat Header */}
-          <div className="shrink-0 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-800">
+          <div className="shrink-0 border-b border-gray-200 dark:border-white/15 flex items-center justify-between px-6 py-3 bg-white dark:bg-black">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors duration-200"
                 aria-label="Toggle sidebar"
               >
                 <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Room: {roomId}</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{roomId}</h2>
             </div>
             <div className="flex flex-col items-end gap-1">
               <span className="text-xs font-bold font-mono text-gray-700 dark:text-gray-300">
@@ -433,7 +433,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                           : roomMessageCount >= maxMessages * 0.7
                           ? 'bg-yellow-500'
                           : 'bg-purple-500'
-                        : 'bg-gray-300 dark:bg-gray-600'
+                        : 'bg-gray-300 dark:bg-white/30'
                     }`}
                   ></div>
                 ))}
@@ -442,7 +442,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
           </div>
 
           {/* Messages Container */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-5 bg-gray-50/50 dark:bg-gray-800/50">
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-5 bg-gray-50/50 dark:bg-black/50">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8">
                 <div className="w-20 h-20 flex items-center justify-center mb-6 bg-indigo-50 dark:bg-indigo-900/30">
@@ -484,13 +484,13 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
           {/* Active Users */}
           {activeUsers.length > 0 && (
-            <div className="shrink-0 border-t px-4 py-1.5 flex items-center gap-2 overflow-x-auto transition-colors duration-300 bg-gray-50 border-gray-200 dark:bg-gray-900/50 dark:border-gray-700">
+            <div className="shrink-0 border-t px-4 py-1.5 flex items-center gap-2 overflow-x-auto transition-colors duration-300 bg-gray-50 border-gray-200 dark:bg-black/50 dark:border-white/15">
               <span className="text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap text-gray-500 dark:text-gray-400">Active:</span>
               <div className="flex items-center gap-1.5">
                 {activeUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="flex items-center gap-1 px-2 py-0.5 border rounded bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-600"
+                    className="flex items-center gap-1 px-2 py-0.5 border rounded bg-white border-gray-200 dark:bg-black dark:border-white/15"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                     <span className="text-[10px] font-medium text-gray-600 dark:text-gray-300">{user.name}</span>
@@ -501,7 +501,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
           )}
 
           {/* Input Area */}
-          <div className="shrink-0 border-t p-4 transition-colors duration-300 bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+          <div className="shrink-0 border-t p-4 transition-colors duration-300 bg-white border-gray-200 dark:bg-black dark:border-white/15">
             {isLimitReached ? (
               <div className="flex items-center justify-center p-4 border bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800">
                 <div className="text-center">
@@ -522,7 +522,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                     value={messageInput}
                     onChange={handleInputChange}
                     placeholder="Type your message..."
-                    className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 pr-12 bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-white/20 dark:focus:border-white"
+                    className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 pr-12 bg-white border-gray-300 text-gray-900 dark:bg-black dark:border-white/15 dark:text-white dark:placeholder-gray-400 dark:focus:ring-white/20 dark:focus:border-white"
                     disabled={!socket}
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">

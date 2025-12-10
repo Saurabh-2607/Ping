@@ -13,7 +13,7 @@ export default function LimitReachedModal({ messageCount, maxMessages }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className={`shadow-2xl max-w-md w-full overflow-hidden ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        theme === 'dark' ? 'bg-black border border-gray-800' : 'bg-white'
       }`}>
         {/* Header with gradient */}
         <div className="bg-linear-to-r from-indigo-600 to-purple-600 px-6 py-8 text-center">
@@ -35,7 +35,7 @@ export default function LimitReachedModal({ messageCount, maxMessages }) {
         <div className="px-6 py-8">
           {/* Message stats */}
           <div className={`p-4 mb-6 ${
-            theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+            theme === 'dark' ? 'bg-white/10' : 'bg-gray-50'
           }`}>
             <div className="flex items-center justify-between">
               <span className={`font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Total messages:</span>
@@ -85,7 +85,7 @@ export default function LimitReachedModal({ messageCount, maxMessages }) {
             onClick={() => window.location.reload()}
             variant="ghost"
             className={`w-full py-3 ${
-              theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-50'
+              theme === 'dark' ? 'text-gray-300 hover:bg-white/10' : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
             Refresh Page

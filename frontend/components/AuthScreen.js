@@ -77,9 +77,9 @@ export default function AuthScreen({ onAuthSuccess }) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+    <div className="flex items-center justify-center min-h-screen bg-white text-gray-900 dark:bg-black dark:text-white">
       <div className="w-full max-w-md mx-auto px-4">
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-8 shadow-lg">
+        <div className="rounded-lg bg-white dark:bg-black dark:border dark:border-gray-800 p-8 shadow-lg">
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
@@ -123,7 +123,7 @@ export default function AuthScreen({ onAuthSuccess }) {
                   placeholder="you@example.com"
                   className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 ${
                     theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-600'
+                      ? 'bg-black border-gray-700 text-white placeholder-gray-400 focus:bg-black'
                       : 'bg-gray-50 border-gray-200 text-gray-900 focus:bg-white'
                   }`}
                   disabled={isLoading}
@@ -144,7 +144,7 @@ export default function AuthScreen({ onAuthSuccess }) {
                   placeholder="John Doe"
                   className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 ${
                     theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-600'
+                      ? 'bg-black border-gray-700 text-white placeholder-gray-400 focus:bg-black'
                       : 'bg-gray-50 border-gray-200 text-gray-900 focus:bg-white'
                   }`}
                   disabled={isLoading}
@@ -191,7 +191,7 @@ export default function AuthScreen({ onAuthSuccess }) {
                   placeholder="000000"
                   className={`w-full px-4 py-3 border text-center text-2xl tracking-[0.5em] font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 font-mono ${
                     theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-indigo-400 placeholder-gray-500 focus:bg-gray-600'
+                      ? 'bg-black border-gray-700 text-indigo-400 placeholder-gray-500 focus:bg-black'
                       : 'bg-gray-50 border-gray-200 text-indigo-600 focus:bg-white'
                   }`}
                   disabled={isLoading}

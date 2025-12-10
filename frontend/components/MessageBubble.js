@@ -21,7 +21,7 @@ export default function MessageBubble({ message, isCurrentUser, showAvatar = tru
           <div
             className={`w-8 h-8 shrink-0 flex items-center justify-center text-xs font-bold rounded-md ${
               theme === 'dark'
-                ? 'bg-gray-600 text-gray-200'
+                ? 'bg-white text-black'
                 : 'bg-gray-300 text-gray-700'
             }`}
           >
@@ -38,7 +38,7 @@ export default function MessageBubble({ message, isCurrentUser, showAvatar = tru
           isCurrentUser
             ? 'bg-blue-500 text-white'
             : theme === 'dark'
-              ? 'bg-gray-700 text-gray-100'
+              ? 'bg-white/10 text-white border border-white/5'
               : 'bg-gray-200 text-gray-900'
         }`}
       >
@@ -66,7 +66,7 @@ export default function MessageBubble({ message, isCurrentUser, showAvatar = tru
       {/* Profile Avatar - Right side for sender */}
       {isCurrentUser && (
         showAvatar ? (
-          <div className="w-8 h-8 shrink-0 flex items-center justify-center text-xs font-bold rounded-full bg-blue-600 text-white">
+          <div className="w-8 h-8 shrink-0 flex items-center justify-center text-xs font-bold rounded-md bg-blue-600 text-white">
             {message.user.name?.charAt(0).toUpperCase() || 'U'}
           </div>
         ) : (

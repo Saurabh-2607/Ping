@@ -24,7 +24,7 @@ export default function ProgressBar({ messageCount, maxMessages, label = 'Messag
         </p>
       </div>
       <div className={`w-full rounded-full h-2 overflow-hidden ${
-        theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+        theme === 'dark' ? 'bg-white/20' : 'bg-gray-100'
       }`}>
         <div
           className={`h-full transition-all duration-500 ease-out rounded-full ${getColorClass()}`}
