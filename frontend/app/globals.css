@@ -1,22 +1,52 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --input-bg: #f9fafb;
+  --input-border: #e5e7eb;
+  --muted: #6b7280;
+  --muted-bg: #f3f4f6;
+  --header-bg: #ffffff;
+  --header-border: #e5e7eb;
+  --message-bg-other: #e5e7eb;
+  --message-text-other: #111827;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-light: #eef2ff;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --warning-bg: #fefce8;
+  --warning-text: #854d0e;
 }
 
-
-/* Removed dark mode for consistent light theme */
-
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
+[data-theme="dark"] {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --input-bg: #1e293b;
+  --input-border: #475569;
+  --muted: #94a3b8;
+  --muted-bg: #334155;
+  --header-bg: #1e293b;
+  --header-border: #334155;
+  --message-bg-other: #334155;
+  --message-text-other: #f1f5f9;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-light: #1e1b4b;
+  --danger: #f87171;
+  --danger-bg: #450a0a;
+  --success: #4ade80;
+  --success-bg: #052e16;
+  --warning-bg: #422006;
+  --warning-text: #fef08a;
 }
 
 body {
@@ -25,6 +55,7 @@ body {
   font-family: var(--font-sans), Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Scrollbar Styling */
@@ -38,12 +69,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e0;
+  background: var(--muted);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0;
+  background: var(--foreground);
 }
 
 /* Focus styles for accessibility */

@@ -101,3 +101,71 @@ export async function getRoomMessages(roomId, limit = 50) {
     };
   }
 }
+
+export async function getAllRooms() {
+  try {
+    const response = await fetch(`${API_URL}/api/rooms`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Get all rooms error:', error);
+    return {
+      success: false,
+      data: [],
+      message: 'Failed to get rooms: ' + error.message,
+    };
+  }
+}
+
+export async function createRoom(roomId, roomName) {
+  try {
+    const response = await fetch(`${API_URL}/api/rooms/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId, roomName }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Create room error:', error);
+    return {
+      success: false,
+      data: null,
+      message: 'Failed to create room: ' + error.message,
+    };
+  }
+}
+
+export async function resetRoom(roomId) {
+  try {
+    const response = await fetch(`${API_URL}/api/rooms/${roomId}/reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Reset room error:', error);
+    return {
+      success: false,
+      data: null,
+      message: 'Failed to reset room: ' + error.message,
+    };
+  }
+}
+
+export async function getServerHealth() {
+  try {
+    const response = await fetch(`${API_URL}/health`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Health check error:', error);
+    return {
+      status: 'error',
+      message: 'Failed to check server health: ' + error.message,
+    };
+  }
+}

@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import { requestOTP, verifyOTP } from '@/lib/api';
+import { useTheme } from '@/components/ThemeProvider';
+import Button from '@/components/ui/Button';
 
 export default function AuthScreen({ onAuthSuccess }) {
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [showOTPInput, setShowOTPInput] = useState(false);
@@ -74,31 +77,32 @@ export default function AuthScreen({ onAuthSuccess }) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
+    <div className="flex items-center justify-center min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+      <div className="w-full max-w-md mx-auto px-4">
+        <div className="rounded-lg bg-white dark:bg-gray-800 p-8 shadow-lg">
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-block p-4 bg-indigo-600 rounded-2xl mb-4 shadow-lg shadow-indigo-200">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to join the conversation</p>
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+              Welcome to <span className="text-indigo-600">Ping</span>
+            </h1>
+            <p className="text-base text-gray-500 dark:text-gray-400">Sign in to join the conversation</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-800 text-sm">{error}</p>
+            <div className={`mb-6 p-4 border ${
+              theme === 'dark' ? 'bg-red-900/30 border-red-800' : 'bg-red-50 border-red-200'
+            }`}>
+              <p className={theme === 'dark' ? 'text-red-400 text-sm' : 'text-red-800 text-sm'}>{error}</p>
             </div>
           )}
 
           {/* Success Message */}
           {success && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-green-800 text-sm">{success}</p>
+            <div className={`mb-6 p-4 border ${
+              theme === 'dark' ? 'bg-green-900/30 border-green-800' : 'bg-green-50 border-green-200'
+            }`}>
+              <p className={theme === 'dark' ? 'text-green-400 text-sm' : 'text-green-800 text-sm'}>{success}</p>
             </div>
           )}
 
@@ -106,7 +110,9 @@ export default function AuthScreen({ onAuthSuccess }) {
             /* Email & Name Form */
             <form onSubmit={handleRequestOTP} className="space-y-5">
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="email" className={`block text-sm font-semibold mb-2 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                }`}>
                   Email Address
                 </label>
                 <input
@@ -115,13 +121,19 @@ export default function AuthScreen({ onAuthSuccess }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200"
+                  className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 ${
+                    theme === 'dark'
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-600'
+                      : 'bg-gray-50 border-gray-200 text-gray-900 focus:bg-white'
+                  }`}
                   disabled={isLoading}
                 />
               </div>
 
               <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="name" className={`block text-sm font-semibold mb-2 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                }`}>
                   Full Name
                 </label>
                 <input
@@ -130,15 +142,22 @@ export default function AuthScreen({ onAuthSuccess }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200"
+                  className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 ${
+                    theme === 'dark'
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-600'
+                      : 'bg-gray-50 border-gray-200 text-gray-900 focus:bg-white'
+                  }`}
                   disabled={isLoading}
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 px-4 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 disabled:bg-indigo-400 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200 flex items-center justify-center gap-2"
+                variant="accent"
+                className={`w-full py-3.5 flex items-center justify-center gap-2 ${
+                  theme === 'dark' ? 'hover:shadow-lg hover:shadow-indigo-900/30' : 'hover:shadow-lg hover:shadow-indigo-200'
+                }`}
               >
                 {isLoading && (
                   <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -147,9 +166,9 @@ export default function AuthScreen({ onAuthSuccess }) {
                   </svg>
                 )}
                 Send OTP
-              </button>
+              </Button>
 
-              <p className="text-center text-sm text-gray-500 mt-6">
+              <p className={`text-center text-sm mt-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                 We'll send a one-time password to your email address for secure authentication.
               </p>
             </form>
@@ -157,10 +176,12 @@ export default function AuthScreen({ onAuthSuccess }) {
             /* OTP Form */
             <form onSubmit={handleVerifyOTP} className="space-y-5">
               <div>
-                <label htmlFor="otp" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="otp" className={`block text-sm font-semibold mb-2 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                }`}>
                   Enter OTP
                 </label>
-                <p className="text-sm text-gray-500 mb-3">Check your email for the 6-digit OTP</p>
+                <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Check your email for the 6-digit OTP</p>
                 <input
                   id="otp"
                   type="text"
@@ -168,15 +189,22 @@ export default function AuthScreen({ onAuthSuccess }) {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="000000"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-center text-2xl tracking-[0.5em] font-bold text-indigo-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 font-mono"
+                  className={`w-full px-4 py-3 border text-center text-2xl tracking-[0.5em] font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 font-mono ${
+                    theme === 'dark'
+                      ? 'bg-gray-700 border-gray-600 text-indigo-400 placeholder-gray-500 focus:bg-gray-600'
+                      : 'bg-gray-50 border-gray-200 text-indigo-600 focus:bg-white'
+                  }`}
                   disabled={isLoading}
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 px-4 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 disabled:bg-indigo-400 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200 flex items-center justify-center gap-2"
+                variant="accent"
+                className={`w-full py-3.5 flex items-center justify-center gap-2 ${
+                  theme === 'dark' ? 'hover:shadow-lg hover:shadow-indigo-900/30' : 'hover:shadow-lg hover:shadow-indigo-200'
+                }`}
               >
                 {isLoading && (
                   <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -185,24 +213,22 @@ export default function AuthScreen({ onAuthSuccess }) {
                   </svg>
                 )}
                 Verify OTP
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
                 onClick={handleBackToEmail}
                 disabled={isLoading}
-                className="w-full py-2 px-4 text-indigo-600 font-semibold rounded-xl hover:bg-indigo-50 disabled:opacity-50 transition duration-200"
+                variant="ghost"
+                className={`w-full py-2 ${
+                  theme === 'dark' ? 'text-indigo-400 hover:bg-indigo-900/30' : 'text-indigo-600 hover:bg-indigo-50'
+                }`}
               >
                 ← Back to Email
-              </button>
+              </Button>
             </form>
           )}
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-gray-600 text-sm mt-6">
-          Secure authentication powered by email OTP
-        </p>
       </div>
     </div>
   );

@@ -1,13 +1,11 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Text_Me_One } from "next/font/google";
 import "./globals.css";
+import ThemeProvider from "@/components/ThemeProvider";
+import Navbar from "@/components/ui/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const textMeOne = Text_Me_One({
+  variable: "--font-text-me-one",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -18,11 +16,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable}`}
+        className={`${textMeOne.className} h-screen overflow-hidden`}
       >
-        {children}
+        <ThemeProvider>
+          <div className="h-full flex flex-col">
+            <Navbar />
+            <div className="flex-1 overflow-hidden">
+              {children}
+            </div>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

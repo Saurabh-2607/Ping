@@ -256,7 +256,77 @@ Server will start at `http://localhost:3000`
 
 ## REST API Endpoints
 
-### Health Check
+### Create a New Room
+
+**POST** `/api/rooms/create`
+
+Create a new room with a custom name.
+
+**Request:**
+```json
+{
+  "roomId": "project-alpha",
+  "roomName": "Project Alpha Discussion"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Room created successfully",
+  "data": {
+    "roomId": "project-alpha",
+    "roomName": "Project Alpha Discussion",
+    "createdAt": "2025-12-07T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### Get All Available Rooms
+
+**GET** `/api/rooms`
+
+Retrieve all available rooms with active user counts and statistics.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "rooms": [
+      {
+        "roomId": "project-alpha",
+        "roomName": "Project Alpha Discussion",
+        "activeUserCount": 5,
+        "messageCount": 32,
+        "maxMessages": 50,
+        "isLimitReached": false,
+        "createdAt": "2025-12-07T10:00:00.000Z"
+      },
+      {
+        "roomId": "dev-team",
+        "roomName": "Dev Team Chat",
+        "activeUserCount": 3,
+        "messageCount": 18,
+        "maxMessages": 50,
+        "isLimitReached": false,
+        "createdAt": "2025-12-07T09:30:00.000Z"
+      }
+    ],
+    "totalRooms": 2
+  }
+}
+```
+
+**Notes:**
+- Rooms are sorted by active user count (highest first)
+- `activeUserCount` shows users currently connected in the room
+- `messageCount` shows the current message count out of the maximum
+
+---
 
 **GET** `/health`
 
@@ -377,12 +447,13 @@ const socket = io('http://localhost:3000', {
 
 #### 1. join-room
 
-Join a chat room.
+Join a chat room. Optionally provide a `roomName` to create/register the room if it doesn't exist.
 
 **Emit:**
 ```javascript
 socket.emit('join-room', {
   roomId: 'project-alpha',
+  roomName: 'Project Alpha Discussion', // optional - auto-creates room if not exists
   user: {
     email: 'user@example.com',
     name: 'John Doe'
@@ -694,6 +765,72 @@ socket.on('error', (data) => {
       }
     }
 
+    // Fetch and display available rooms
+    async function loadRooms() {
+      try {
+        const response = await fetch(`${API_URL}/api/rooms`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          displayAvailableRooms(data.data.rooms);
+        }
+      } catch (error) {
+        console.error('Failed to load rooms:', error);
+      }
+    }
+
+    // Create a new room
+    async function createRoom() {
+      const roomName = prompt('Enter room name:');
+      if (!roomName) return;
+      
+      const roomId = roomName.toLowerCase().replace(/\s+/g, '-');
+
+      try {
+        const response = await fetch(`${API_URL}/api/rooms/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomId, roomName })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          alert('Room created! Room ID: ' + roomId);
+          loadRooms(); // Refresh room list
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        console.error('Failed to create room:', error);
+      }
+    }
+
+    // Display available rooms
+    function displayAvailableRooms(rooms) {
+      const roomList = document.getElementById('room-list');
+      roomList.innerHTML = '';
+      
+      rooms.forEach(room => {
+        const roomEl = document.createElement('div');
+        roomEl.className = 'room-item';
+        roomEl.innerHTML = `
+          <h3>${room.roomName}</h3>
+          <p>Active users: ${room.activeUserCount}</p>
+          <p>Messages: ${room.messageCount}/${room.maxMessages}</p>
+          <button onclick="joinSpecificRoom('${room.roomId}', '${room.roomName}')">Join</button>
+        `;
+        roomList.appendChild(roomEl);
+      });
+    }
+
+    function joinSpecificRoom(roomId, roomName) {
+      // Update room ID and name, then initialize chat
+      window.location.href = `/room/${roomId}`;
+    }
+
     async function requestOTP() {
       const email = document.getElementById('email').value;
       const name = document.getElementById('name').value;
@@ -751,9 +888,10 @@ socket.on('error', (data) => {
       socket.on('connect', () => {
         console.log('Connected to server');
         
-        // Join room
+        // Join room with optional roomName parameter
         socket.emit('join-room', {
           roomId: roomId,
+          roomName: roomId, // Will auto-create room if it doesn't exist
           user: {
             email: sessionData.email,
             name: sessionData.name

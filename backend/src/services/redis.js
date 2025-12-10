@@ -149,6 +149,37 @@ class RedisClient {
     const key = `session:${sessionId}`;
     await this.client.del(key);
   }
+
+  // Room metadata operations
+  async createRoom(roomId, roomName) {
+    const key = `room:${roomId}:metadata`;
+    const metadata = {
+      roomId,
+      roomName,
+      createdAt: new Date().toISOString(),
+    };
+    await this.client.setEx(key, config.chat.messageExpirySeconds, JSON.stringify(metadata));
+    
+    // Add to rooms set for listing
+    await this.client.sAdd('active:rooms', roomId);
+  }
+
+  async getRoomMetadata(roomId) {
+    const key = `room:${roomId}:metadata`;
+    const data = await this.client.get(key);
+    return data ? JSON.parse(data) : null;
+  }
+
+  async getAllRooms() {
+    const roomIds = await this.client.sMembers('active:rooms');
+    return roomIds;
+  }
+
+  async deleteRoom(roomId) {
+    const key = `room:${roomId}:metadata`;
+    await this.client.del(key);
+    await this.client.sRem('active:rooms', roomId);
+  }
 }
 
 export default new RedisClient();

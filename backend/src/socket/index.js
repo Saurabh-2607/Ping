@@ -50,7 +50,7 @@ class SocketHandler {
     // Join a room
     socket.on('join-room', async (data) => {
       try {
-        let { roomId, user } = data || {};
+        let { roomId, user, roomName } = data || {};
 
         // Fallback: derive roomId from referer /room/<id>
         if (!roomId) {
@@ -66,6 +66,20 @@ class SocketHandler {
         if (currentRoom) {
           socket.leave(currentRoom);
           this.removeUserFromRoom(currentRoom, socket.id);
+        }
+
+        // Auto-register room if not exists and roomName is provided
+        if (roomName) {
+          const existingRoom = await redisClient.getRoomMetadata(roomId);
+          if (!existingRoom) {
+            await redisClient.createRoom(roomId, roomName);
+          }
+        } else {
+          // Ensure room exists (auto-create with default name if needed)
+          const existingRoom = await redisClient.getRoomMetadata(roomId);
+          if (!existingRoom) {
+            await redisClient.createRoom(roomId, roomId);
+          }
         }
 
         // Join new room

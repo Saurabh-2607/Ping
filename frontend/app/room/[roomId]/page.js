@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import AuthScreen from '@/components/AuthScreen';
+import { useParams, useRouter } from 'next/navigation';
 import ChatScreen from '@/components/ChatScreen';
 import { validateSession } from '@/lib/api';
 
 export default function RoomPage() {
   const params = useParams();
+  const router = useRouter();
   const roomId = params?.roomId || 'default';
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sessionData, setSessionData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,53 +21,45 @@ export default function RoomPage() {
           const result = await validateSession(parsedSession.sessionId);
           if (result.success) {
             setSessionData(parsedSession);
-            setIsAuthenticated(true);
           } else {
             localStorage.removeItem('chatSession');
-            setIsAuthenticated(false);
+            router.replace('/login');
           }
         } catch (error) {
           console.error('Session validation failed:', error);
           localStorage.removeItem('chatSession');
-          setIsAuthenticated(false);
+          router.replace('/login');
         }
+      } else {
+        router.replace('/login');
       }
       setIsLoading(false);
     };
 
     checkSession();
-  }, []);
-
-  const handleAuthSuccess = (session) => {
-    localStorage.setItem('chatSession', JSON.stringify(session));
-    setSessionData(session);
-    setIsAuthenticated(true);
-  };
+  }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem('chatSession');
-    setSessionData(null);
-    setIsAuthenticated(false);
+    router.replace('/login');
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="flex items-center justify-center min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="mt-4 text-lg text-gray-700">Loading...</p>
+          <p className="mt-4 text-lg">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {isAuthenticated && sessionData ? (
+    <main className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+      {sessionData ? (
         <ChatScreen sessionData={sessionData} onLogout={handleLogout} roomId={roomId} />
-      ) : (
-        <AuthScreen onAuthSuccess={handleAuthSuccess} />
-      )}
+      ) : null}
     </main>
   );
 }

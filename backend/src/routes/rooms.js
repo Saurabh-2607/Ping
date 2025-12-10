@@ -1,8 +1,94 @@
 import express from 'express';
 import redisClient from '../services/redis.js';
 import config from '../config/index.js';
+import socketHandler from '../socket/index.js';
 
 const router = express.Router();
+
+// Create a new room
+router.post('/create', async (req, res) => {
+  try {
+    const { roomId, roomName } = req.body;
+
+    if (!roomId || !roomName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Room ID and room name are required',
+      });
+    }
+
+    // Check if room already exists
+    const existingRoom = await redisClient.getRoomMetadata(roomId);
+    if (existingRoom) {
+      return res.status(400).json({
+        success: false,
+        message: 'Room already exists',
+      });
+    }
+
+    // Create the room
+    await redisClient.createRoom(roomId, roomName);
+
+    res.json({
+      success: true,
+      message: 'Room created successfully',
+      data: {
+        roomId,
+        roomName,
+        createdAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Error in create room:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create room',
+    });
+  }
+});
+
+// Get all available rooms with active user counts
+router.get('/', async (req, res) => {
+  try {
+    const roomIds = await redisClient.getAllRooms();
+    const rooms = [];
+
+    for (const roomId of roomIds) {
+      const metadata = await redisClient.getRoomMetadata(roomId);
+      const activeUsers = socketHandler.getRoomUsers(roomId);
+      const messageCount = await redisClient.getMessageCount(roomId);
+
+      if (metadata) {
+        rooms.push({
+          roomId,
+          roomName: metadata.roomName,
+          activeUserCount: activeUsers.length,
+          messageCount,
+          maxMessages: config.chat.maxMessagesPerRoom,
+          isLimitReached: messageCount >= config.chat.maxMessagesPerRoom,
+          createdAt: metadata.createdAt,
+        });
+      }
+    }
+
+    // Sort by active users count (descending)
+    rooms.sort((a, b) => b.activeUserCount - a.activeUserCount);
+
+    res.json({
+      success: true,
+      data: {
+        rooms,
+        totalRooms: rooms.length,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching all rooms:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch rooms',
+    });
+  }
+});
 
 // Get user's message count
 router.get('/user/:email/stats', async (req, res) => {
