@@ -11,6 +11,7 @@ export default function Sidebar({
   availableRooms,
   isSidebarOpen,
   onLogout,
+  onCloseSidebar,
 }) {
   const router = useRouter();
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
@@ -36,7 +37,18 @@ export default function Sidebar({
   };
 
   return (
-    <aside className={`${isSidebarOpen ? 'w-64' : 'w-0'} shrink-0 transition-all duration-300 overflow-hidden bg-white dark:bg-black flex flex-col border-r border-gray-200 dark:border-white/15`}>
+    <aside className={`${isSidebarOpen ? 'w-64 sm:w-64' : 'w-0'} fixed sm:relative left-0 top-0 h-full z-20 shrink-0 transition-all duration-300 overflow-hidden bg-white dark:bg-black flex flex-col border-r border-gray-200 dark:border-white/15`}>
+      {/* Close button for mobile */}
+      <button
+        onClick={onCloseSidebar}
+        className="sm:hidden absolute top-3 right-3 p-2 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors duration-200 z-30"
+        aria-label="Close sidebar"
+      >
+        <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      
       {/* User Info Section */}
       <div className="shrink-0 p-5 border-b border-gray-200 dark:border-white/15">
         <div className="flex items-center gap-3 mb-4">
