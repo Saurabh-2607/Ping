@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { requestOTP, verifyOTP, validateSession } from '@/lib/api';
 import { useTheme } from '@/components/ThemeProvider';
-import Container from '@/components/Container';
+import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
 
@@ -28,7 +28,7 @@ export default function LoginPage() {
           const parsed = JSON.parse(session);
           const result = await validateSession(parsed.sessionId);
           if (result.success) {
-            router.replace('/chat');
+            router.replace('/room/default');
             return;
           }
           localStorage.removeItem('chatSession');
@@ -44,7 +44,7 @@ export default function LoginPage() {
 
   const handleAuthSuccess = (session) => {
     localStorage.setItem('chatSession', JSON.stringify(session));
-    router.replace('/chat');
+    router.replace('/room/default');
   };
 
   const handleRequestOTP = async (e) => {
@@ -148,9 +148,9 @@ export default function LoginPage() {
             {/* Error Message */}
             {error && (
               <div className={`mb-6 p-4 border ${
-                theme === 'dark' ? 'bg-red-900/30 border-red-800' : 'bg-red-50 border-red-200'
+                theme === 'dark' ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'
               }`}>
-                <p className={theme === 'dark' ? 'text-red-400 text-sm' : 'text-red-800 text-sm'}>{error}</p>
+                <p className={`text-sm font-medium ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>{error}</p>
               </div>
             )}
 
@@ -178,10 +178,10 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 ${
+                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${
                       theme === 'dark'
-                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-600'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 focus:bg-white'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     disabled={isLoading}
                   />
@@ -199,10 +199,10 @@ export default function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 ${
+                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${
                       theme === 'dark'
-                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-600'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 focus:bg-white'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     disabled={isLoading}
                   />

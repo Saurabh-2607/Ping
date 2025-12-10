@@ -2,7 +2,7 @@
 
 import { useTheme } from './ThemeProvider';
 
-export default function MessageBubble({ message, isCurrentUser }) {
+export default function MessageBubble({ message, isCurrentUser, showAvatar = true }) {
   const { theme } = useTheme();
 
   const formatTime = (timestamp) => {
@@ -14,36 +14,65 @@ export default function MessageBubble({ message, isCurrentUser }) {
   };
 
   return (
-    <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex items-start gap-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+      {/* Profile Avatar - Left side for receiver */}
+      {!isCurrentUser && (
+        showAvatar ? (
+          <div
+            className={`w-8 h-8 shrink-0 flex items-center justify-center text-xs font-bold rounded-md ${
+              theme === 'dark'
+                ? 'bg-gray-600 text-gray-200'
+                : 'bg-gray-300 text-gray-700'
+            }`}
+          >
+            {message.user.name?.charAt(0).toUpperCase() || 'U'}
+          </div>
+        ) : (
+          <div className="w-8 shrink-0"></div>
+        )
+      )}
+      
+      {/* Message Bubble */}
       <div
-        className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-lg ${
+        className={`max-w-xs lg:max-w-md xl:max-w-lg px-3 py-1 ${
           isCurrentUser
-            ? 'bg-indigo-600 text-white rounded-br-none'
+            ? 'bg-blue-500 text-white'
             : theme === 'dark'
-              ? 'bg-gray-700 text-gray-100 rounded-bl-none'
-              : 'bg-gray-200 text-gray-900 rounded-bl-none'
+              ? 'bg-gray-700 text-gray-100'
+              : 'bg-gray-200 text-gray-900'
         }`}
       >
-        {!isCurrentUser && (
-          <p className={`text-xs font-semibold mb-1 ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+        {!isCurrentUser && showAvatar && (
+          <p className={`text-xs font-semibold mb-px ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
           }`}>
             {message.user.name}
           </p>
         )}
-        <p className="break-words">{message.text}</p>
+        <p className="wrap-break-word text-base">{message.text}</p>
         <p
-          className={`text-xs mt-2 ${
+          className={`text-xs mt-px ${
             isCurrentUser 
-              ? 'text-indigo-100' 
+              ? 'text-blue-100' 
               : theme === 'dark' 
                 ? 'text-gray-400' 
-                : 'text-gray-600'
+                : 'text-gray-500'
           }`}
         >
           {formatTime(message.timestamp)}
         </p>
       </div>
+
+      {/* Profile Avatar - Right side for sender */}
+      {isCurrentUser && (
+        showAvatar ? (
+          <div className="w-8 h-8 shrink-0 flex items-center justify-center text-xs font-bold rounded-full bg-blue-600 text-white">
+            {message.user.name?.charAt(0).toUpperCase() || 'U'}
+          </div>
+        ) : (
+          <div className="w-8 shrink-0"></div>
+        )
+      )}
     </div>
   );
 }

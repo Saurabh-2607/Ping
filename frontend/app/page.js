@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import Container from '@/components/Container';
+import Container from '@/components/ui/Container';
 import Image from 'next/image';
 
 const randomRoom = () => `room-${Math.random().toString(36).slice(2, 8)}`;

@@ -46,7 +46,7 @@ export default function RoomPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+      <div className="flex items-center justify-center h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
           <p className="mt-4 text-lg">Loading...</p>
@@ -56,7 +56,7 @@ export default function RoomPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+    <main className="h-full overflow-hidden bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
       {sessionData ? (
         <ChatScreen sessionData={sessionData} onLogout={handleLogout} roomId={roomId} />
       ) : null}
