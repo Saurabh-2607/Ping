@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { io } from 'socket.io-client';
-import { logout, getAllRooms, createRoom } from '@/lib/api';
+import { logout, getAllRooms } from '@/lib/api';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 import LimitReachedModal from './LimitReachedModal';
-import ProgressBar from './ProgressBar';
-import ThemeToggle from './ThemeToggle';
+import Sidebar from './Sidebar';
+import ChatHeader from './ChatHeader';
 import { useTheme } from './ThemeProvider';
 import Button from './ui/Button';
 import Container from './ui/Container';
@@ -34,37 +34,11 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const [error, setError] = useState('');
   const [availableRooms, setAvailableRooms] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isCreatingRoom, setIsCreatingRoom] = useState(false);
-  const [newRoomName, setNewRoomName] = useState('');
 
   // Refs
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const socketRef = useRef(null);
-
-  const handleNewRoom = () => {
-    const slug = `room-${Math.random().toString(36).slice(2, 8)}`;
-    router.push(`/room/${slug}`);
-  };
-
-  const handleCreateRoom = () => {
-    const roomNameToUse = newRoomName.trim() || `room-${Math.random().toString(36).slice(2, 8)}`;
-    setIsCreatingRoom(false);
-    setNewRoomName('');
-    
-    // Call createRoom API
-    createRoom(roomNameToUse, roomNameToUse).then((result) => {
-      if (result.success) {
-        router.push(`/room/${result.data.roomId}`);
-      } else {
-        console.error('Failed to create room:', result.message);
-        setError(result.message || 'Failed to create room');
-      }
-    }).catch((err) => {
-      console.error('Error creating room:', err);
-      setError('Error creating room: ' + err.message);
-    });
-  };
 
   const fetchAvailableRooms = async () => {
     try {
@@ -284,162 +258,24 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
       <div className="flex flex-1 min-h-0 overflow-hidden border border-gray-200 dark:border-white/15">
         {/* Sidebar */}
-        <aside className={`${isSidebarOpen ? 'w-64' : 'w-0'} shrink-0 transition-all duration-300 overflow-hidden bg-white dark:bg-black flex flex-col border-r border-gray-200 dark:border-white/15`}>
-          {/* User Info Section */}
-          <div className="shrink-0 p-5 border-b border-gray-200 dark:border-white/15">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-base">
-                {sessionData?.name?.charAt(0).toUpperCase() || 'U'}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate text-gray-900 dark:text-white">{sessionData?.name || 'User'}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{sessionData?.email || ''}</p>
-              </div>
-            </div>
-            <Button
-              onClick={handleLogout}
-              variant="danger"
-              size="sm"
-              className="w-full text-xs"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Logout
-            </Button>
-            <div className='flex justify-between mt-5 items-center'>
-            <h2 className="font-bold text-base text-gray-900 dark:text-white">Available Rooms</h2>
-            <span className="text-xs text-gray-500 dark:text-gray-400">[{availableRooms.length} rooms]</span>
-            </div>
-          </div>
-
-          {/* Room List */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2">
-            {!Array.isArray(availableRooms) || availableRooms.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500 dark:text-gray-400 text-sm">No rooms available</p>
-              </div>
-            ) : (
-              availableRooms.map((room) => {
-                const currentRoomId = room.id || room.roomId;
-                const isActive = currentRoomId === roomId;
-                return (
-                  <div
-                    key={currentRoomId}
-                    onClick={() => {
-                      if (currentRoomId !== roomId) {
-                        router.push(`/room/${currentRoomId}`);
-                      }
-                    }}
-                    className={`w-full px-5 py-2.5 text-sm transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                      isActive
-                        ? 'bg-emerald-500/20 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
-                        : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-900 dark:text-gray-300'
-                    }`}
-                  >
-                    <p className="font-semibold text-sm truncate">{currentRoomId}</p>
-                    {isActive && (
-                      <span className="text-lg text-emerald-600 dark:text-emerald-400">✓</span>
-                    )}
-                  </div>
-                );
-              })
-            )}
-          </div>
-
-          {/* Create Room Section - Now at Bottom */}
-          {!isCreatingRoom ? (
-            <div className="shrink-0 px-4 py-3 border-t border-gray-200 dark:border-white/15">
-              <Button
-                onClick={() => setIsCreatingRoom(true)}
-                variant="accent"
-                size="md"
-                className="w-full text-sm"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Create Room
-              </Button>
-            </div>
-          ) : (
-            <div className="shrink-0 px-4 py-3 space-y-2 border-t border-gray-200 dark:border-white/15">
-              <input
-                type="text"
-                placeholder="Room name (optional)"
-                value={newRoomName}
-                onChange={(e) => setNewRoomName(e.target.value)}
-                className="w-full px-3 py-2 border bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 dark:bg-black dark:border-white/15 dark:text-white dark:placeholder-gray-500 dark:focus:ring-white/20 dark:focus:border-white text-sm"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCreateRoom();
-                  }
-                }}
-              />
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleCreateRoom}
-                  variant="accent"
-                  size="sm"
-                  className="flex-1"
-                >
-                  Create
-                </Button>
-                <Button
-                  onClick={() => {
-                    setIsCreatingRoom(false);
-                    setNewRoomName('');
-                  }}
-                  variant="secondary"
-                  size="sm"
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
-        </aside>
+        <Sidebar
+          sessionData={sessionData}
+          roomId={roomId}
+          availableRooms={availableRooms}
+          isSidebarOpen={isSidebarOpen}
+          onLogout={handleLogout}
+        />
 
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden transition-colors duration-300 bg-white dark:bg-black">
           {/* Chat Header */}
-          <div className="shrink-0 border-b border-gray-200 dark:border-white/15 flex items-center justify-between px-6 py-3 bg-white dark:bg-black">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors duration-200"
-                aria-label="Toggle sidebar"
-              >
-                <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{roomId}</h2>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <span className="text-xs font-bold font-mono text-gray-700 dark:text-gray-300">
-                Message Count : {roomMessageCount}/{maxMessages}
-              </span>
-              {/* Progress Bar - Segmented style */}
-              <div className="flex items-center gap-px">
-                {Array.from({ length: maxMessages }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`w-0.5 h-4 transition-all duration-300 ${
-                      i < roomMessageCount
-                        ? roomMessageCount >= maxMessages * 0.9
-                          ? 'bg-red-500'
-                          : roomMessageCount >= maxMessages * 0.7
-                          ? 'bg-yellow-500'
-                          : 'bg-purple-500'
-                        : 'bg-gray-300 dark:bg-white/30'
-                    }`}
-                  ></div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ChatHeader
+            roomId={roomId}
+            roomMessageCount={roomMessageCount}
+            maxMessages={maxMessages}
+            isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
 
           {/* Messages Container */}
           <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-5 bg-gray-50/50 dark:bg-black/50">
