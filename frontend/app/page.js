@@ -20,13 +20,13 @@ export default function Home() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
-      <Container className="flex flex-1 overflow-hidden">
+    <div className="h-full w-full flex flex-col overflow-auto transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
+      <Container className="flex flex-col sm:flex-row flex-1 items-center sm:items-stretch overflow-hidden">
         {/* Left Section */}
-        <div className="w-full lg:w-1/2 pr-8 flex flex-col items-start relative overflow-hidden">
+        <div className="w-full sm:w-1/2 px-4 sm:px-6 md:pr-8 md:pl-0 flex flex-col items-center sm:items-start relative shrink-0 sm:shrink sm:overflow-hidden">
           {/* Main Content */}
-          <main className="max-w-xl flex-1 flex flex-col justify-center">
-            <h1 className="text-2xl lg:text-3xl font-bold leading-[1.1] mb-4 tracking-tight text-gray-900 dark:text-white">
+          <main className="max-w-xl pt-8 sm:pt-0 sm:flex-1 flex flex-col justify-center text-center sm:text-left">
+            <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold leading-[1.1] mb-4 tracking-tight text-gray-900 dark:text-white">
               Stay Connected with <span className="inline-flex items-center gap-1"><Image
                 src="/ping-logo.svg"
                 width={24}
@@ -37,11 +37,11 @@ export default function Home() {
               /> Ping</span>, anywhere, anytime.
             </h1>
 
-            <p className="text-base lg:text-lg mb-8 max-w-md leading-relaxed text-gray-500 dark:text-gray-400">
+            <p className="text-base sm:text-base md:text-lg mb-6 sm:mb-8 max-w-md leading-relaxed text-gray-500 dark:text-gray-400 mx-auto sm:mx-0">
               Connect instantly with friends and strangers. Share your thoughts, jokes, and memes in real-time chat rooms.
             </p>
 
-            <div className="flex flex-col items-start gap-8">
+            <div className="flex flex-col items-center sm:items-start gap-6 sm:gap-8">
               <Button
                 onClick={handleGetStarted}
                 size="lg"
@@ -59,20 +59,20 @@ export default function Home() {
             </div>
           </main>
 
-          {/* Footer */}
-          <footer id="footer" className="text-sm pb-4 font-semibold text-gray-800 dark:text-white">
+          {/* Footer - hidden on mobile, shown on sm+ */}
+          <footer id="footer" className="hidden sm:block text-xs sm:text-sm pb-4 font-semibold text-gray-800 dark:text-white">
             © {new Date().getFullYear()} by Ping. All Rights Reserved
           </footer>
         </div>
 
         {/* Right Section */}
-        <div className="hidden lg:flex w-1/2 relative flex-col items-end justify-start dark:bg-black">  
+        <div className="flex shrink-0 sm:shrink w-full sm:w-1/2 relative flex-col items-center sm:items-end justify-center sm:justify-start dark:bg-black sm:overflow-hidden">  
           <Image
           src="/landing.png"
           alt='Landing Image'
           width={1080}
           height={1080}
-          className='max-h-screen w-auto object-contain'
+          className='max-h-[60vh] max-w-[90vw] sm:max-h-screen sm:max-w-full w-auto object-contain'
           />
         </div>
       </Container>
