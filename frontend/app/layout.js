@@ -10,8 +10,8 @@ const textMeOne = Text_Me_One({
 });
 
 export const metadata = {
-  title: "Chat App",
-  description: "Real-time chat application with URL-based rooms",
+  title: "Ping by Saurabh Sharma",
+  description: "Connect instantly with friends and strangers. Share your thoughts, jokes, and memes in real-time chat rooms.",
 };
 
 export default function RootLayout({ children }) {
