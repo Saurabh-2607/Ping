@@ -26,9 +26,9 @@ class SocketHandler {
   initialize(httpServer) {
     this.io = new Server(httpServer, {
       cors: {
-        origin: config.cors.allowedOrigins,
+        origin: config.cors.allowedOrigins === '*' ? '*' : config.cors.allowedOrigins,
         methods: ['GET', 'POST'],
-        credentials: true,
+        credentials: config.cors.allowedOrigins !== '*',
       },
       pingTimeout: 60000,
       pingInterval: 25000,
