@@ -61,7 +61,7 @@ export default function LoginPage() {
     try {
       const result = await requestOTP(email, name);
       if (result.success) {
-        setSuccess('OTP sent successfully! Check your email.');
+        setSuccess("OTP sent successfully! Check your inbox — if you don't see it, check your spam/junk folder.");
         setShowOTPInput(true);
       } else {
         setError(result.message || 'Failed to request OTP');
@@ -147,18 +147,16 @@ export default function LoginPage() {
 
             {/* Error Message */}
             {error && (
-              <div className={`mb-6 p-4 border ${
-                theme === 'dark' ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'
-              }`}>
+              <div className={`mb-6 p-4 border ${theme === 'dark' ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'
+                }`}>
                 <p className={`text-sm font-medium ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>{error}</p>
               </div>
             )}
 
             {/* Success Message */}
             {success && (
-              <div className={`mb-6 p-4 border ${
-                theme === 'dark' ? 'bg-green-900/30 border-green-800' : 'bg-green-50 border-green-200'
-              }`}>
+              <div className={`mb-6 p-4 border ${theme === 'dark' ? 'bg-green-900/30 border-green-800' : 'bg-green-50 border-green-200'
+                }`}>
                 <p className={theme === 'dark' ? 'text-green-400 text-sm' : 'text-green-800 text-sm'}>{success}</p>
               </div>
             )}
@@ -167,9 +165,8 @@ export default function LoginPage() {
               /* Email & Name Form */
               <form onSubmit={handleRequestOTP} className="space-y-5">
                 <div>
-                  <label htmlFor="email" className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <label htmlFor="email" className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                     Email Address
                   </label>
                   <input
@@ -178,19 +175,17 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${
-                      theme === 'dark'
+                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${theme === 'dark'
                         ? 'bg-black border-gray-700 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-                    }`}
+                      }`}
                     disabled={isLoading}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="name" className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <label htmlFor="name" className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                     Full Name
                   </label>
                   <input
@@ -199,11 +194,10 @@ export default function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${
-                      theme === 'dark'
+                    className={`w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 ${theme === 'dark'
                         ? 'bg-black border-gray-700 text-white placeholder-gray-500 focus:ring-white/20 focus:border-white'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-                    }`}
+                      }`}
                     disabled={isLoading}
                   />
                 </div>
@@ -212,9 +206,8 @@ export default function LoginPage() {
                   type="submit"
                   disabled={isLoading}
                   variant="accent"
-                  className={`w-full py-3.5 flex items-center justify-center gap-2 ${
-                    theme === 'dark' ? 'hover:shadow-lg hover:shadow-indigo-900/30' : 'hover:shadow-lg hover:shadow-indigo-200'
-                  }`}
+                  className={`w-full py-3.5 flex items-center justify-center gap-2 ${theme === 'dark' ? 'hover:shadow-lg hover:shadow-indigo-900/30' : 'hover:shadow-lg hover:shadow-indigo-200'
+                    }`}
                 >
                   {isLoading && (
                     <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -233,9 +226,8 @@ export default function LoginPage() {
               /* OTP Form */
               <form onSubmit={handleVerifyOTP} className="space-y-5">
                 <div>
-                  <label htmlFor="otp" className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <label htmlFor="otp" className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                     Enter OTP
                   </label>
                   <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Check your email for the 6-digit OTP</p>
@@ -246,11 +238,10 @@ export default function LoginPage() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                     placeholder="000000"
-                    className={`w-full px-4 py-3 border text-center text-2xl tracking-[0.5em] font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 font-mono ${
-                      theme === 'dark'
+                    className={`w-full mono-font px-4 py-3 border text-center text-2xl tracking-[0.5em] font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 font-mono ${theme === 'dark'
                         ? 'bg-black border-gray-700 text-indigo-400 placeholder-gray-500 focus:bg-black'
                         : 'bg-gray-50 border-gray-200 text-indigo-600 focus:bg-white'
-                    }`}
+                      }`}
                     disabled={isLoading}
                   />
                 </div>
@@ -259,9 +250,8 @@ export default function LoginPage() {
                   type="submit"
                   disabled={isLoading}
                   variant="accent"
-                  className={`w-full py-3.5 flex items-center justify-center gap-2 ${
-                    theme === 'dark' ? 'hover:shadow-lg hover:shadow-indigo-900/30' : 'hover:shadow-lg hover:shadow-indigo-200'
-                  }`}
+                  className={`w-full py-3.5 flex items-center justify-center gap-2 ${theme === 'dark' ? 'hover:shadow-lg hover:shadow-indigo-900/30' : 'hover:shadow-lg hover:shadow-indigo-200'
+                    }`}
                 >
                   {isLoading && (
                     <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -277,9 +267,8 @@ export default function LoginPage() {
                   onClick={handleBackToEmail}
                   disabled={isLoading}
                   variant="ghost"
-                  className={`w-full py-2 ${
-                    theme === 'dark' ? 'text-indigo-400 hover:bg-indigo-900/30' : 'text-indigo-600 hover:bg-indigo-50'
-                  }`}
+                  className={`w-full py-2 ${theme === 'dark' ? 'text-indigo-400 hover:bg-indigo-900/30' : 'text-indigo-600 hover:bg-indigo-50'
+                    }`}
                 >
                   ← Back to Email
                 </Button>

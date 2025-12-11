@@ -11,7 +11,7 @@ export default function ThemeToggle({ className = '' }) {
       onClick={toggleTheme}
       variant="secondary"
       size="icon"
-      className={`relative hover:scale-105 duration-300 ${className}`}
+      className={`h-10 w-10 p-0 flex items-center justify-center ${className}`}
       aria-label="Toggle theme"
       title="Toggle theme"
     >
