@@ -34,7 +34,7 @@ export default function MessageBubble({ message, isCurrentUser, showAvatar = tru
       
       {/* Message Bubble */}
       <div
-        className={`max-w-xs lg:max-w-md xl:max-w-lg px-3 py-1 ${
+        className={`max-w-[75%] sm:max-w-md px-3 py-1 ${
           isCurrentUser
             ? 'bg-blue-500 text-white'
             : theme === 'dark'

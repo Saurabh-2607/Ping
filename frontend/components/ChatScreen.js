@@ -361,7 +361,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
               </div>
             ) : (
               <form onSubmit={handleSendMessage} className="flex gap-2 sm:gap-3 items-center">
-                <div className="flex-1 relative">
+                <div className="flex-1 relative min-w-0">
                   <input
                     type="text"
                     value={messageInput}
