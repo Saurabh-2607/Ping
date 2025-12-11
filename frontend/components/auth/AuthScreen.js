@@ -29,7 +29,7 @@ export default function AuthScreen({ onAuthSuccess }) {
     try {
       const result = await requestOTP(email, name);
       if (result.success) {
-        setSuccess('OTP sent successfully! Check your email.');
+        setSuccess("OTP sent successfully! Check your inbox — if you don't see it, check your spam/junk folder.");
         setShowOTPInput(true);
       } else {
         setError(result.message || 'Failed to request OTP');
@@ -182,6 +182,9 @@ export default function AuthScreen({ onAuthSuccess }) {
                   Enter OTP
                 </label>
                 <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Check your email for the 6-digit OTP</p>
+                <p className={`text-xs mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  If you don't see the email, please check your spam/junk folder or request a new OTP.
+                </p>
                 <input
                   id="otp"
                   type="text"
