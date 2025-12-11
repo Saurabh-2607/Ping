@@ -12,7 +12,7 @@ export default function Navbar() {
   const showGetStarted = pathname === '/';
 
   return (
-    <header className="w-full mt-13 md:mt-0 bg-white/80 dark:bg-black/80">
+    <header className="w-full bg-white/80 dark:bg-black/80">
       <Container className="py-4 flex items-center justify-between">
         <div className="flex items-center gap-12">
           {/* Logo */}
