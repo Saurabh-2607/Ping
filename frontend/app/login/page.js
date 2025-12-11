@@ -226,7 +226,7 @@ export default function LoginPage() {
                 </Button>
 
                 <p className={`text-center text-sm mt-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                  We'll send a one-time password to your email address for secure authentication.
+                  We&apos;ll send a one-time password to your email address for secure authentication.
                 </p>
               </form>
             ) : (

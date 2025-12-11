@@ -21,7 +21,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const roomId = incomingRoomId || 'default';
 
   // State
-  const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -71,10 +70,11 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
       scrollToBottom();
       shouldScroll.current = false;
     }
-  }, []);
+  }, [messages.length]);
 
   // Fetch available rooms
   useEffect(() => {
+    // eslint-disable-next-line
     fetchAvailableRooms();
     const interval = setInterval(fetchAvailableRooms, 10000);
     return () => clearInterval(interval);
@@ -93,7 +93,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     socketRef.current = newSocket;
 
     newSocket.on('connect', () => {
-      console.log('Connected to server');
       setIsLoading(false);
 
       // Join room
@@ -107,7 +106,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     });
 
     newSocket.on('room-joined', (data) => {
-      console.log('Joined room:', data);
       setMessages(data.messages || []);
       setRoomMessageCount(data.messageCount || 0);
       setMaxMessages(data.maxMessages || 50);
@@ -127,8 +125,8 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
     newSocket.on('limit-reached', (data) => {
       setIsLimitReached(true);
-      setRoomMessageCount(data.messageCount || roomMessageCount);
-      setMaxMessages(data.maxMessages || maxMessages);
+      setRoomMessageCount(prev => data.messageCount || prev);
+      setMaxMessages(prev => data.maxMessages || prev);
     });
 
     newSocket.on('user-joined', (data) => {
@@ -160,11 +158,8 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     });
 
     newSocket.on('disconnect', (reason) => {
-      console.log('Disconnected:', reason);
       setError('Disconnected from server');
     });
-
-    setSocket(newSocket);
 
     return () => {
       newSocket.disconnect();
@@ -175,16 +170,16 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const handleSendMessage = (e) => {
     e.preventDefault();
 
-    if (!messageInput.trim() || !socket || isLimitReached) {
+    if (!messageInput.trim() || !socketRef.current || isLimitReached) {
       return;
     }
 
-    socket.emit('send-message', {
+    socketRef.current.emit('send-message', {
       text: messageInput.trim(),
     });
 
     setMessageInput('');
-    socket.emit('stop-typing');
+    socketRef.current.emit('stop-typing');
     setIsTyping(false);
 
     if (typingTimeoutRef.current) {
@@ -201,9 +196,9 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const handleInputChange = (e) => {
     setMessageInput(e.target.value);
 
-    if (!isTyping && socket && !isLimitReached) {
+    if (!isTyping && socketRef.current && !isLimitReached) {
       setIsTyping(true);
-      socket.emit('typing');
+      socketRef.current.emit('typing');
     }
 
     // Clear existing timeout
@@ -213,8 +208,8 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
     // Set new timeout
     typingTimeoutRef.current = setTimeout(() => {
-      if (socket) {
-        socket.emit('stop-typing');
+      if (socketRef.current) {
+        socketRef.current.emit('stop-typing');
       }
       setIsTyping(false);
     }, 1000);
@@ -224,8 +219,8 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const handleLogout = async () => {
     try {
       await logout(sessionData.sessionId);
-      if (socket) {
-        socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
       }
       onLogout();
     } catch (err) {
@@ -248,7 +243,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   }
 
   return (
-    <Container fullHeight className="flex flex-col transition-colors duration-300 text-gray-900 dark:text-white !px-0 sm:!px-6">
+    <Container fullHeight className="flex flex-col transition-colors duration-300 text-gray-900 dark:text-white px-0! sm:px-6!">
       {/* Error Banner */}
       {error && error !== 'Disconnected from server' && (
         <div className="shrink-0 border-b px-4 py-3 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-800">

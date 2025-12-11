@@ -25,7 +25,6 @@ export const useSocket = (roomId, user, onConnect, onDisconnect) => {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      console.log('Socket connected:', socket.id);
       onConnect?.(socket);
 
       // Join room
@@ -36,7 +35,6 @@ export const useSocket = (roomId, user, onConnect, onDisconnect) => {
     });
 
     socket.on('disconnect', () => {
-      console.log('Socket disconnected');
       onDisconnect?.();
     });
 
