@@ -65,7 +65,6 @@ app.use((err, req, res, next) => {
 async function startServer() {
   try {
     // Connect to Redis
-    // Connect to Redis
     console.log('Connecting to Redis Cloud...');
     await redisClient.connect();
 
@@ -93,7 +92,7 @@ async function startServer() {
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('\nSIGTERM received. Shutting down gracefully...');
+  console.log('Signing off...');
   
   // Close Socket.IO connections
   socketHandler.getIO()?.close();
@@ -109,8 +108,8 @@ process.on('SIGTERM', async () => {
 });
 
 process.on('SIGINT', async () => {
-  console.log('\nSIGINT received. Shutting down gracefully...');
-  
+  console.log('Signing off...');
+
   // Close Socket.IO connections
   socketHandler.getIO()?.close();
   

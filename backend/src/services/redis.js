@@ -24,11 +24,11 @@ class RedisClient {
       });
 
       this.client.on('connect', () => {
-        console.log('✅ Redis client connecting...');
+        console.log('Redis client connecting...');
       });
 
       this.client.on('ready', () => {
-        console.log('✅ Redis client ready');
+        console.log('Redis client ready');
         this.isConnected = true;
       });
 
