@@ -16,14 +16,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="h-full">
       <body
-        className={`${textMeOne.className} h-screen overflow-hidden`}
+        className={`${textMeOne.className} h-full overflow-hidden fixed inset-0`}
       >
         <ThemeProvider>
-          <div className="h-full flex flex-col">
-            <Navbar />
-            <main className="flex-1 min-h-0 overflow-hidden">
+          <div className="h-full flex flex-col w-full">
+            <div className="shrink-0">
+              <Navbar />
+            </div>
+            <main className="flex-1 min-h-0 overflow-hidden relative">
               {children}
             </main>
           </div>

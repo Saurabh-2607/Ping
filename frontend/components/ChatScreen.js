@@ -248,7 +248,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   }
 
   return (
-    <Container fullHeight className="flex flex-col transition-colors duration-300 text-gray-900 dark:text-white">
+    <Container fullHeight className="flex flex-col transition-colors duration-300 text-gray-900 dark:text-white !px-0 sm:!px-6">
       {/* Error Banner */}
       {error && error !== 'Disconnected from server' && (
         <div className="shrink-0 border-b px-4 py-3 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-800">
@@ -380,8 +380,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                   type="submit"
                   disabled={!socket || !messageInput.trim() || isLimitReached}
                   variant="accent"
-                  size="lg"
-                  className="px-3 sm:px-4"
+                  className="px-3 sm:px-4 py-2 sm:py-3 h-full"
                 >
                   <div className="flex items-center gap-2">
                     <span className="hidden sm:inline">Send</span>
