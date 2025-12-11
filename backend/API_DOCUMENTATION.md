@@ -440,8 +440,8 @@ const socket = io('http://localhost:3000', {
   reconnection: true,
 });
 ```
-
----
+ 
+--- 
 
 ### Client → Server Events
 
