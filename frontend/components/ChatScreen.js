@@ -363,7 +363,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                     onChange={handleInputChange}
                     placeholder="Type your message..."
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 pr-10 sm:pr-12 bg-white border-gray-300 text-gray-900 dark:bg-black dark:border-white/15 dark:text-white dark:placeholder-gray-400 dark:focus:ring-white/20 dark:focus:border-white"
-                    disabled={!socket}
+                    disabled={!socketRef.current}
                   />
                   <div className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -373,7 +373,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                 </div>
                 <Button
                   type="submit"
-                  disabled={!socket || !messageInput.trim() || isLimitReached}
+                  disabled={!socketRef.current || !messageInput.trim() || isLimitReached}
                   variant="accent"
                   className="px-3 sm:px-4 py-2 sm:py-3 h-full"
                 >
