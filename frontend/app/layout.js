@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Text_Me_One } from "next/font/google";
+import { Text_Me_One } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import Navbar from "@/components/layout/Navbar";

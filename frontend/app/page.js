@@ -10,10 +10,6 @@ const randomRoom = () => `room-${Math.random().toString(36).slice(2, 8)}`;
 export default function Home() {
   const router = useRouter();
 
-  const handleCreateRoom = () => {
-    const room = randomRoom();
-    router.push(`/room/${room}`);
-  };
 
   const handleGetStarted = () => {
     router.push('/login');

@@ -4,7 +4,6 @@ export default function ChatHeader({
   roomId,
   roomMessageCount,
   maxMessages,
-  isSidebarOpen,
   onToggleSidebar,
 }) {
   return (
