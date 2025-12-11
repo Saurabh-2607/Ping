@@ -23,9 +23,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <div className="h-full flex flex-col">
             <Navbar />
-            <div className="flex-1 overflow-hidden">
               {children}
-            </div>
           </div>
         </ThemeProvider>
       </body>
