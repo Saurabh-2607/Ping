@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono, Text_Me_One } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
-import Navbar from "@/components/ui/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 const textMeOne = Text_Me_One({
   variable: "--font-text-me-one",

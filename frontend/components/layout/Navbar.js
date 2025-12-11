@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import ThemeToggle from '../ThemeToggle';
-import Button from './Button';
-import Container from './Container';
+import Button from '../ui/Button';
+import Container from '../ui/Container';
 
 export default function Navbar() {
   const pathname = usePathname();
