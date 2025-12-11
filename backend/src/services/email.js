@@ -18,7 +18,7 @@ class EmailService {
     try {
       const otp = this.generateOTP();
       console.log(`Generated OTP for ${email}: ${otp}`);
-      
+
       // Store OTP in Redis with 10-minute expiry
       await redisClient.storeOTP(email, otp);
 
@@ -26,7 +26,7 @@ class EmailService {
       const { data, error } = await this.resend.emails.send({
         from: config.resend.fromEmail,
         to: [email],
-        subject: 'Your Chat App Verification Code',
+        subject: 'Your Ping Verification Code',
         html: this.getEmailTemplate(name, otp),
       });
 
@@ -46,7 +46,7 @@ class EmailService {
   async verifyOTP(email, otp) {
     try {
       const storedOTP = await redisClient.getOTP(email);
-      
+
       if (!storedOTP) {
         return { valid: false, message: 'OTP expired or not found' };
       }
@@ -57,7 +57,7 @@ class EmailService {
 
       // Delete OTP after successful verification
       await redisClient.deleteOTP(email);
-      
+
       return { valid: true, message: 'OTP verified successfully' };
     } catch (error) {
       console.error('Error in verifyOTP:', error);
@@ -70,9 +70,10 @@ class EmailService {
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Text+Me+One&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Text Me One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       line-height: 1.6;
       color: #333;
       max-width: 600px;
@@ -80,21 +81,19 @@ class EmailService {
       padding: 20px;
     }
     .container {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 10px;
+      background: linear-gradient(135deg, #1f1f1f 0%, #000000 100%);
       padding: 40px;
       text-align: center;
       color: white;
     }
     .otp-box {
-      background: white;
-      color: #333;
+      background: rgb(63, 56, 56);
+      color: #ffffff;
       font-size: 32px;
       font-weight: bold;
       letter-spacing: 8px;
       padding: 20px;
       margin: 30px 0;
-      border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     .footer {
@@ -111,7 +110,7 @@ class EmailService {
   <div class="container">
     <h1>Verification Code</h1>
     <p>Hello ${name || 'there'}!</p>
-    <p>Your verification code for the Chat App is:</p>
+    <p>Your verification code for the Ping is:</p>
     
     <div class="otp-box">${otp}</div>
     
@@ -119,12 +118,12 @@ class EmailService {
     <p>If you didn't request this code, please ignore this email.</p>
     
     <div class="footer">
-      <p>© ${new Date().getFullYear()} Chat App. All rights reserved.</p>
+      <p>© ${new Date().getFullYear()} Ping. All rights reserved.</p>
     </div>
   </div>
 </body>
 </html>
-    `;
+`;
   }
 }
 

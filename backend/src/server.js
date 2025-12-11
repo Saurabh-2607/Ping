@@ -76,7 +76,7 @@ async function startServer() {
     // Start server
     httpServer.listen(config.port, () => {
       console.log('\n' + '='.repeat(60));
-      console.log('Chat App Backend Server Started Successfully!');
+      console.log('Ping Backend Server Started Successfully!');
       console.log('='.repeat(60));
       console.log(`Server running on: http://localhost:${config.port}`);
       console.log(`Environment: ${config.nodeEnv}`);
