@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Button from './ui/Button';
+import Button from '../ui/Button';
 
 export default function LimitReachedModal({ messageCount, maxMessages }) {
   const [isOpen, setIsOpen] = useState(true);

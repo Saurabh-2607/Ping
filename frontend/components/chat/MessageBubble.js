@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from './ThemeProvider';
+import { useTheme } from '../ThemeProvider';
 
 export default function MessageBubble({ message, isCurrentUser, showAvatar = true }) {
   const { theme } = useTheme();

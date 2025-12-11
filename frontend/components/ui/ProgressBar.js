@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from './ThemeProvider';
+import { useTheme } from '../ThemeProvider';
 
 export default function ProgressBar({ messageCount, maxMessages, label = 'Message Progress' }) {
   const { theme } = useTheme();

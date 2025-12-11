@@ -27,7 +27,7 @@ export default function ChatHeader({
         </span>
         {/* Progress Bar - Segmented style - hidden on very small screens */}
         <div className="hidden sm:flex items-center gap-px">
-          {Array.from({ length: maxMessages }, (_, i) => (
+          {Array.from({ length: Math.max(1, maxMessages) }, (_, i) => (
             <div
               key={i}
               className={`w-0.5 h-3 sm:h-4 transition-all duration-300 ${

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createRoom } from '@/lib/api';
-import Button from './ui/Button';
+import Button from '../ui/Button';
 
 export default function Sidebar({
   sessionData,
