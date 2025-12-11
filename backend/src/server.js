@@ -10,11 +10,16 @@ import roomRoutes from './routes/rooms.js';
 const app = express();
 const httpServer = createServer(app);
 
-// Middleware
+// CORS Middleware - allow all origins
 app.use(cors({
-  origin: true,
-  credentials: true,
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
 }));
+
+// Handle preflight requests explicitly
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
