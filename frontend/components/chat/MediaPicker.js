@@ -5,7 +5,7 @@ import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useTheme } from '../ThemeProvider';
 import Button from '../ui/Button';
 
-const TENOR_API_KEY = process.env.TENOR_API_KEY || 'LIVDSRZULELA';
+const NEXT_PUBLIC_TENOR_API_KEY = process.env.NEXT_PUBLIC_TENOR_API_KEY || 'LIVDSRZULELA';
 const TENOR_LIMIT = 24;
 
 export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose }) {
@@ -47,8 +47,8 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
     }, [searchQuery]);
 
     useEffect(() => {
-        if (activeTab === 'stickers' && TENOR_API_KEY === 'LIVDSRZULELA') {
-            console.warn('Using default Tenor API Key. Please set TENOR_API_KEY.');
+        if (activeTab === 'stickers' && NEXT_PUBLIC_TENOR_API_KEY === 'LIVDSRZULELA') {
+            console.warn('Using default Tenor API Key. Please set NEXT_PUBLIC_TENOR_API_KEY.');
         }
     }, [activeTab]);
 
@@ -61,7 +61,7 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
             setStickerError('');
 
             const baseParams = new URLSearchParams({
-                key: TENOR_API_KEY,
+                key: NEXT_PUBLIC_TENOR_API_KEY,
                 client_key: 'chat-app',
                 limit: String(TENOR_LIMIT),
                 media_filter: 'gif,tinygif',
@@ -91,7 +91,7 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
                 }
                 if (!response.ok) {
                     const params = new URLSearchParams({
-                        key: TENOR_API_KEY,
+                        key: NEXT_PUBLIC_TENOR_API_KEY,
                         client_key: 'chat-app',
                         limit: String(TENOR_LIMIT),
                         media_filter: 'gif,tinygif',
@@ -134,7 +134,7 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
             if (sticker.id) {
                 const qs = new URLSearchParams({
                     id: String(sticker.id),
-                    key: TENOR_API_KEY,
+                    key: NEXT_PUBLIC_TENOR_API_KEY,
                     client_key: 'chat-app',
                     q: debouncedQuery || 'sticker',
                 }).toString();

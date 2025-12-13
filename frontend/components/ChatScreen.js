@@ -22,7 +22,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const { theme } = useTheme();
   const roomId = incomingRoomId || 'default';
 
-  // State
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +35,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const [availableRooms, setAvailableRooms] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Refs
   const typingTimeoutRef = useRef(null);
   const socketRef = useRef(null);
 
@@ -44,7 +42,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     try {
       const result = await getAllRooms();
       if (result.success && result.data) {
-        // Handle both array and object responses
         const roomsArray = Array.isArray(result.data) ? result.data : (result.data.rooms || []);
         setAvailableRooms(roomsArray);
       } else {
@@ -56,16 +53,13 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     }
   };
 
-  // trigger to ask MessagesList to scroll to bottom (increments on send)
   const [scrollTrigger, setScrollTrigger] = useState(0);
 
-  // Fetch available rooms
   useEffect(() => {
     // eslint-disable-next-line
     fetchAvailableRooms();
     const interval = setInterval(fetchAvailableRooms, 10000);
 
-    // Initial check for mobile
     if (window.innerWidth < 640) {
       setIsSidebarOpen(false);
     }
@@ -73,7 +67,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     return () => clearInterval(interval);
   }, []);
 
-  // Initialize Socket.IO connection
   useEffect(() => {
     const newSocket = io(API_URL, {
       transports: ['websocket'],
@@ -88,7 +81,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     newSocket.on('connect', () => {
       setIsLoading(false);
 
-      // Join room
       newSocket.emit('join-room', {
         roomId: roomId,
         user: {
@@ -159,7 +151,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     };
   }, [sessionData, roomId]);
 
-  // Handle sending message
   const handleSendMessage = (e) => {
     e.preventDefault();
 
@@ -179,7 +170,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
       clearTimeout(typingTimeoutRef.current);
     }
 
-    // Ask MessagesList to scroll to bottom
     setScrollTrigger((s) => s + 1);
   };
 
@@ -205,7 +195,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     setScrollTrigger((s) => s + 1);
   };
 
-  // Handle typing
   const handleInputChange = (e) => {
     setMessageInput(e.target.value);
 
@@ -214,12 +203,10 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
       socketRef.current.emit('typing');
     }
 
-    // Clear existing timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
 
-    // Set new timeout
     typingTimeoutRef.current = setTimeout(() => {
       if (socketRef.current) {
         socketRef.current.emit('stop-typing');
@@ -228,7 +215,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     }, 1000);
   };
 
-  // Handle logout
   const handleLogout = async () => {
     try {
       await logout(sessionData.sessionId);
@@ -251,7 +237,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
       <ErrorBanner error={error} />
 
       <div className="flex flex-1 min-h-0 overflow-hidden border border-gray-200 dark:border-white/15">
-        {/* Sidebar */}
         <Sidebar
           sessionData={sessionData}
           roomId={roomId}
@@ -261,7 +246,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
           onCloseSidebar={() => setIsSidebarOpen(false)}
         />
 
-        {/* Overlay for mobile when sidebar is open */}
         {isSidebarOpen && (
           <div
             className="fixed inset-0 bg-black/50 z-10 sm:hidden"
@@ -269,9 +253,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
           />
         )}
 
-        {/* Main Chat Area */}
         <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden transition-colors duration-300 bg-white dark:bg-black">
-          {/* Chat Header */}
           <ChatHeader
             roomId={roomId}
             roomMessageCount={roomMessageCount}
@@ -280,7 +262,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
             onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           />
 
-          {/* Messages Container */}
           <MessagesList
             messages={messages}
             sessionData={sessionData}
@@ -290,7 +271,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
           <ActiveUsersBar activeUsers={activeUsers} />
 
-          {/* Input Area */}
           <div className="shrink-0 border-t p-2 sm:p-3 md:p-4 transition-colors duration-300 bg-white border-gray-200 dark:bg-black dark:border-white/15">
             {isLimitReached ? (
               <div className="flex items-center justify-center p-4 border bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800">
@@ -318,7 +298,6 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
         </div>
       </div>
 
-      {/* Limit Reached Modal */}
       {isLimitReached && (
         <LimitReachedModal messageCount={roomMessageCount} maxMessages={maxMessages} />
       )}

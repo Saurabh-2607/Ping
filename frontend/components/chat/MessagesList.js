@@ -21,7 +21,6 @@ export default function MessagesList({ messages, sessionData, otherUsersTyping, 
     }
   }, [messages.length]);
 
-  // Scroll when parent requests (e.g. after sending a message)
   useEffect(() => {
     if (scrollTrigger > 0) {
       scrollToBottom();
