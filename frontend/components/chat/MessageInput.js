@@ -44,7 +44,7 @@ export default function MessageInput({
             value={messageInput}
             onChange={onChange}
             placeholder="Type your message..."
-            className="w-full h-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 pr-10 sm:pr-12 bg-white border-gray-300 text-gray-900 dark:bg-black dark:border-white/15 dark:text-white dark:placeholder-gray-400 dark:focus:ring-white/20 dark:focus:border-white"
+            className="w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base border focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200 pr-10 sm:pr-12 bg-white border-gray-300 text-gray-900 dark:bg-black dark:border-white/15 dark:text-white dark:placeholder-gray-400 dark:focus:ring-white/20 dark:focus:border-white"
             disabled={disabled}
           />
           <a onClick={togglePicker} disabled={disabled || isLimitReached} className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 cursor-pointer">
@@ -58,7 +58,7 @@ export default function MessageInput({
           type="submit"
           disabled={disabled || !messageInput.trim() || isLimitReached}
           variant="accent"
-          className="px-3 sm:px-4 py-2 sm:py-3 h-full"
+          className="h-10 sm:h-12 px-3 sm:px-4"
         >
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline">Send</span>
