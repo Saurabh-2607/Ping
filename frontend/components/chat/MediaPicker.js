@@ -12,9 +12,8 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
     const { theme } = useTheme();
     const modalRef = useRef(null);
     const inputRef = useRef(null);
-    const [activeTab, setActiveTab] = useState('stickers'); // 'stickers' | 'emojis'
+    const [activeTab, setActiveTab] = useState('stickers');
 
-    // Close on click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -22,7 +21,6 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
             }
         };
 
-        // Focus input on non-mobile
         if (activeTab === 'stickers' && window.innerWidth >= 640 && inputRef.current) {
             inputRef.current.focus();
         }
@@ -33,16 +31,13 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
         };
     }, [onClose, activeTab]);
 
-    // Search state
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
 
-    // Sticker state
     const [stickers, setStickers] = useState([]);
     const [isLoadingStickers, setIsLoadingStickers] = useState(false);
     const [stickerError, setStickerError] = useState('');
 
-    // Debounce search query
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             setDebouncedQuery(searchQuery.trim());
@@ -51,14 +46,12 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
         return () => clearTimeout(timeoutId);
     }, [searchQuery]);
 
-    // Warning for default API key
     useEffect(() => {
         if (activeTab === 'stickers' && TENOR_API_KEY === 'LIVDSRZULELA') {
             console.warn('Using default Tenor API Key. Please set TENOR_API_KEY.');
         }
     }, [activeTab]);
 
-    // Fetch stickers
     useEffect(() => {
         if (activeTab !== 'stickers') return;
 
@@ -90,7 +83,6 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
             try {
                 let response = await fetch(endpoint, { signal: controller.signal });
 
-                // Fallbacks
                 if (!response.ok) {
                     const noStickerParams = new URLSearchParams(endpoint.split('?')[1]);
                     noStickerParams.delete('searchfilter');
@@ -159,7 +151,6 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
     return (
         <div ref={modalRef} className="absolute bottom-full right-0 mb-2 z-50 w-full sm:w-96 animate-in fade-in slide-in-from-bottom-2 duration-200">
             <div className="w-full border bg-white dark:bg-black border-gray-200 dark:border-white/15 shadow-2xl overflow-hidden ring-1 ring-black/5 flex flex-col h-[400px]">
-                {/* Header Tabs & Search */}
                 <div className="flex items-center gap-2 p-2 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-white/5">
                     <div className="flex bg-gray-200 dark:bg-white/10 p-1 gap-1 shrink-0">
                         <button
@@ -214,7 +205,6 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
                     </Button>
                 </div>
 
-                {/* Stickers Content */}
                 {activeTab === 'stickers' && (
                     <>
                         {stickerError && (
@@ -263,7 +253,6 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
                     </>
                 )}
 
-                {/* Emojis Content */}
                 {activeTab === 'emojis' && (
                     <div className="w-full flex-1 min-h-0 emoji-picker-wrapper">
                         <style jsx global>{`
