@@ -5,7 +5,7 @@ import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useTheme } from '../ThemeProvider';
 import Button from '../ui/Button';
 
-const TENOR_API_KEY = process.env.NEXT_PUBLIC_TENOR_API_KEY || 'LIVDSRZULELA';
+const TENOR_API_KEY = process.env.TENOR_API_KEY || 'LIVDSRZULELA';
 const TENOR_LIMIT = 24;
 
 export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose }) {
@@ -48,7 +48,7 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
     // Warning for default API key
     useEffect(() => {
         if (activeTab === 'stickers' && TENOR_API_KEY === 'LIVDSRZULELA') {
-            console.warn('Using default Tenor API Key. Please set NEXT_PUBLIC_TENOR_API_KEY.');
+            console.warn('Using default Tenor API Key. Please set TENOR_API_KEY.');
         }
     }, [activeTab]);
 
