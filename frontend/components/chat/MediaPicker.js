@@ -11,6 +11,7 @@ const TENOR_LIMIT = 24;
 export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose }) {
     const { theme } = useTheme();
     const modalRef = useRef(null);
+    const inputRef = useRef(null);
     const [activeTab, setActiveTab] = useState('stickers'); // 'stickers' | 'emojis'
 
     // Close on click outside
@@ -21,11 +22,16 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
             }
         };
 
+        // Focus input on non-mobile
+        if (activeTab === 'stickers' && window.innerWidth >= 640 && inputRef.current) {
+            inputRef.current.focus();
+        }
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [onClose]);
+    }, [onClose, activeTab]);
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -179,12 +185,12 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
                     {activeTab === 'stickers' ? (
                         <div className="flex-1 relative min-w-0">
                             <input
+                                ref={inputRef}
                                 type="search"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search GIFs..."
                                 className="w-full pl-7 pr-2 py-2 text-xs bg-gray-200/50 dark:bg-white/10 border-none focus:outline-none transition-all text-gray-900 dark:text-white placeholder-gray-500"
-                                autoFocus
                             />
                             <svg className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

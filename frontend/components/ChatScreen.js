@@ -64,6 +64,12 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     // eslint-disable-next-line
     fetchAvailableRooms();
     const interval = setInterval(fetchAvailableRooms, 10000);
+
+    // Initial check for mobile
+    if (window.innerWidth < 640) {
+      setIsSidebarOpen(false);
+    }
+
     return () => clearInterval(interval);
   }, []);
 

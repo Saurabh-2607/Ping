@@ -30,7 +30,12 @@ export default function MessagesList({ messages, sessionData, otherUsersTyping, 
   }, [scrollTrigger]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5 bg-gray-50/50 dark:bg-black/50">
+    <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5 bg-gray-50/50 dark:bg-black/50" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <style jsx>{`
+        div::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
       {messages.length === 0 ? (
         <div className="h-full flex flex-col items-center justify-center text-center p-4 sm:p-6 md:p-8">
           <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 flex items-center justify-center mb-4 sm:mb-5 md:mb-6 bg-indigo-50 dark:bg-indigo-900/30">
