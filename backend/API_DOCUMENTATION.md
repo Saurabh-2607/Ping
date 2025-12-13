@@ -26,6 +26,7 @@ This is a real-time chat application backend built with:
 - Email-based authentication with OTP
 - URL-based dynamic room creation
 - Real-time message broadcasting
+- Sticker support for rich media messaging
 - 50-message room limit with progress tracking
 - Session management with Redis
 - Dual storage: Redis (fast) + Convex (persistent)
@@ -127,7 +128,7 @@ Server will start at `http://localhost:3000`
 │  └─────────────────────────────────────────────────────┘   │
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │  Socket.IO Handler                                  │   │
-│  │  • join-room, send-message, typing, etc.            │   │
+│  │  • join-room, send-message, send-sticker, typing    │   │
 │  └─────────────────────────────────────────────────────┘   │
 └──────────────┬───────────────────┬──────────────────────────┘
                │                   │
@@ -480,7 +481,29 @@ socket.emit('send-message', {
 
 ---
 
-#### 3. typing
+#### 3. send-sticker
+
+Send a sticker to the current room. Stickers count toward the room's message limit.
+
+**Emit:**
+```javascript
+socket.emit('send-sticker', {
+  stickerId: 'sticker-001',
+  stickerUrl: 'https://example.com/stickers/happy-face.png'
+});
+```
+
+**Receives:** `new-message` event (broadcast to all room members) with `type: 'sticker'`
+
+**Notes:**
+- Stickers count as messages toward the 50-message room limit
+- Both `stickerId` and `stickerUrl` are required
+- The sticker URL should be a valid image URL (PNG, GIF, WebP, etc.)
+- Frontend can use `stickerId` for local caching/optimization
+
+---
+
+#### 4. typing
 
 Notify others that user is typing.
 
@@ -493,7 +516,7 @@ socket.emit('typing');
 
 ---
 
-#### 4. stop-typing
+#### 5. stop-typing
 
 Notify others that user stopped typing.
 
@@ -535,12 +558,14 @@ socket.on('room-joined', (data) => {
 
 #### 2. new-message
 
-New message received in the room.
+New message received in the room (can be text or sticker).
 
 **Receives:**
 ```javascript
 socket.on('new-message', (data) => {
   console.log(data);
+  
+  // Text message:
   /*
   {
     message: {
@@ -559,6 +584,35 @@ socket.on('new-message', (data) => {
     maxMessages: 50
   }
   */
+  
+  // Sticker message:
+  /*
+  {
+    message: {
+      id: 'uuid',
+      roomId: 'project-alpha',
+      type: 'sticker',
+      stickerId: 'sticker-001',
+      stickerUrl: 'https://example.com/stickers/happy-face.png',
+      user: {
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        id: 'socket-id'
+      },
+      timestamp: '2025-12-07T10:00:00.000Z'
+    },
+    roomMessageCount: 25,
+    messageCount: 25,
+    maxMessages: 50
+  }
+  */
+  
+  // Check message type:
+  if (data.message.type === 'sticker') {
+    // Render sticker using data.message.stickerUrl
+  } else {
+    // Render text message using data.message.text
+  }
 });
 ```
 
@@ -962,14 +1016,34 @@ socket.on('error', (data) => {
       }
     }
 
+    function sendSticker(stickerId, stickerUrl) {
+      if (socket && !document.getElementById('message-input').disabled) {
+        socket.emit('send-sticker', {
+          stickerId: stickerId,
+          stickerUrl: stickerUrl
+        });
+      }
+    }
+
     function displayMessage(message) {
       const messagesDiv = document.getElementById('messages');
       const messageEl = document.createElement('div');
-      messageEl.innerHTML = `
-        <strong>${message.user.name}</strong>
-        <span>${new Date(message.timestamp).toLocaleTimeString()}</span>
-        <p>${message.text}</p>
-      `;
+      
+      // Check if it's a sticker or text message
+      if (message.type === 'sticker') {
+        messageEl.innerHTML = `
+          <strong>${message.user.name}</strong>
+          <span>${new Date(message.timestamp).toLocaleTimeString()}</span>
+          <img src="${message.stickerUrl}" alt="Sticker" style="max-width: 150px; max-height: 150px;">
+        `;
+      } else {
+        messageEl.innerHTML = `
+          <strong>${message.user.name}</strong>
+          <span>${new Date(message.timestamp).toLocaleTimeString()}</span>
+          <p>${message.text}</p>
+        `;
+      }
+      
       messagesDiv.appendChild(messageEl);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
@@ -990,9 +1064,71 @@ socket.on('error', (data) => {
       console.log('Buy credits clicked');
       alert('Payment integration coming soon!');
     }
+    
+    // Example sticker data - replace with your own stickers
+    const stickers = [
+      { id: 'happy-001', url: 'https://example.com/stickers/happy.png' },
+      { id: 'sad-002', url: 'https://example.com/stickers/sad.png' },
+      { id: 'love-003', url: 'https://example.com/stickers/love.png' },
+      { id: 'laugh-004', url: 'https://example.com/stickers/laugh.png' }
+    ];
+    
+    // Example: Add sticker picker UI
+    function toggleStickerPicker() {
+      const picker = document.getElementById('sticker-picker');
+      picker.style.display = picker.style.display === 'none' ? 'grid' : 'none';
+    }
+    
+    function selectSticker(stickerId, stickerUrl) {
+      sendSticker(stickerId, stickerUrl);
+      toggleStickerPicker(); // Hide picker after selection
+    }
   </script>
 </body>
 </html>
+```
+
+**Enhanced HTML with Sticker Support:**
+```html
+<!-- Add this to the chat screen div -->
+<div id="chat-screen" style="display:none">
+  <h2>Room: <span id="room-name"></span></h2>
+  <div id="progress">
+    <div id="progress-bar" style="width:0%;height:20px;background:blue;"></div>
+    <span id="message-count">0 / 50</span>
+  </div>
+  
+  <div id="messages"></div>
+  <div id="typing-indicator"></div>
+  
+  <div style="display:flex; gap:10px;">
+    <input id="message-input" type="text" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="toggleStickerPicker()">😊 Stickers</button>
+  </div>
+  
+  <!-- Sticker Picker -->
+  <div id="sticker-picker" style="display:none; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; border: 1px solid #ccc; margin-top: 10px;">
+    <!-- Stickers will be populated here dynamically -->
+  </div>
+</div>
+
+<script>
+  // Initialize sticker picker on page load
+  function initializeStickerPicker() {
+    const picker = document.getElementById('sticker-picker');
+    stickers.forEach(sticker => {
+      const img = document.createElement('img');
+      img.src = sticker.url;
+      img.alt = sticker.id;
+      img.style.width = '80px';
+      img.style.height = '80px';
+      img.style.cursor = 'pointer';
+      img.onclick = () => selectSticker(sticker.id, sticker.url);
+      picker.appendChild(img);
+    });
+  }
+</script>
 ```
 
 ---
@@ -1053,6 +1189,144 @@ socket.on('disconnect', (reason) => {
   }
 });
 ```
+
+---
+
+## Sticker Implementation Guide
+
+### Overview
+
+Stickers are rich media messages that users can send instead of text. They count toward the room's 50-message limit and are stored with the same persistence as text messages.
+
+### Message Structure
+
+**Text Message:**
+```javascript
+{
+  id: 'uuid',
+  roomId: 'project-alpha',
+  text: 'Hello!',
+  user: { name: 'John', email: 'john@example.com', id: 'socket-id' },
+  timestamp: '2025-12-12T10:00:00.000Z'
+}
+```
+
+**Sticker Message:**
+```javascript
+{
+  id: 'uuid',
+  roomId: 'project-alpha',
+  type: 'sticker',
+  stickerId: 'happy-001',
+  stickerUrl: 'https://example.com/stickers/happy.png',
+  user: { name: 'John', email: 'john@example.com', id: 'socket-id' },
+  timestamp: '2025-12-12T10:00:00.000Z'
+}
+```
+
+### Best Practices
+
+1. **Image Formats**: Use WebP or PNG for best quality/size balance
+2. **Size Limits**: Keep stickers under 200KB each
+3. **Dimensions**: Recommend 150x150 to 300x300 pixels
+4. **CDN Hosting**: Host stickers on a CDN for fast loading
+5. **Caching**: Use `stickerId` for local caching to avoid re-downloads
+6. **Accessibility**: Always include alt text for screen readers
+
+### Example Sticker Management
+
+```javascript
+// Sticker library structure
+const stickerPacks = {
+  emotions: [
+    { id: 'happy-001', url: 'https://cdn.example.com/emotions/happy.webp', alt: 'Happy face' },
+    { id: 'sad-002', url: 'https://cdn.example.com/emotions/sad.webp', alt: 'Sad face' },
+    { id: 'love-003', url: 'https://cdn.example.com/emotions/love.webp', alt: 'Heart eyes' }
+  ],
+  animals: [
+    { id: 'cat-001', url: 'https://cdn.example.com/animals/cat.webp', alt: 'Cute cat' },
+    { id: 'dog-002', url: 'https://cdn.example.com/animals/dog.webp', alt: 'Happy dog' }
+  ]
+};
+
+// Render sticker picker with categories
+function renderStickerPicker() {
+  const picker = document.getElementById('sticker-picker');
+  picker.innerHTML = '';
+  
+  Object.entries(stickerPacks).forEach(([category, stickers]) => {
+    const categoryDiv = document.createElement('div');
+    categoryDiv.innerHTML = `<h4>${category}</h4>`;
+    
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    grid.style.gap = '10px';
+    
+    stickers.forEach(sticker => {
+      const img = document.createElement('img');
+      img.src = sticker.url;
+      img.alt = sticker.alt;
+      img.style.width = '70px';
+      img.style.cursor = 'pointer';
+      img.onclick = () => selectSticker(sticker.id, sticker.url);
+      grid.appendChild(img);
+    });
+    
+    categoryDiv.appendChild(grid);
+    picker.appendChild(categoryDiv);
+  });
+}
+
+// Local caching for frequently used stickers
+const stickerCache = new Map();
+
+function preloadSticker(url) {
+  if (!stickerCache.has(url)) {
+    const img = new Image();
+    img.src = url;
+    stickerCache.set(url, img);
+  }
+}
+
+// Preload popular stickers
+stickerPacks.emotions.forEach(s => preloadSticker(s.url));
+```
+
+### Error Handling for Stickers
+
+```javascript
+socket.on('error', (data) => {
+  if (data.message === 'Invalid sticker data') {
+    alert('Please select a valid sticker');
+  }
+});
+
+// Handle broken image URLs
+function displayMessage(message) {
+  if (message.type === 'sticker') {
+    const img = document.createElement('img');
+    img.src = message.stickerUrl;
+    img.alt = 'Sticker';
+    img.style.maxWidth = '150px';
+    
+    // Fallback for broken images
+    img.onerror = () => {
+      img.src = 'https://example.com/fallback-sticker.png';
+      img.alt = 'Sticker unavailable';
+    };
+    
+    messageEl.appendChild(img);
+  }
+}
+```
+
+### Performance Tips
+
+- **Lazy Loading**: Only load sticker picker when user clicks the button
+- **Pagination**: Show 20-30 stickers at a time for large libraries
+- **Compression**: Use WebP format with 80-85% quality
+- **Sprite Sheets**: Combine small stickers into sprite sheets for fewer HTTP requests
 
 ---
 

@@ -4,6 +4,7 @@ import { useTheme } from '../ThemeProvider';
 
 export default function MessageBubble({ message, isCurrentUser, showAvatar = true }) {
   const { theme } = useTheme();
+  const isSticker = message?.type === 'sticker';
 
   const formatTime = (timestamp) => {
     return new Date(timestamp).toLocaleTimeString('en-US', {
@@ -19,11 +20,10 @@ export default function MessageBubble({ message, isCurrentUser, showAvatar = tru
       {!isCurrentUser && (
         showAvatar ? (
           <div
-            className={`w-8 h-8 shrink-0 flex items-center justify-center text-xs font-bold rounded-md ${
-              theme === 'dark'
+            className={`w-8 h-8 shrink-0 flex items-center justify-center text-xs font-bold rounded-md ${theme === 'dark'
                 ? 'bg-white text-black'
                 : 'bg-gray-300 text-gray-700'
-            }`}
+              }`}
           >
             {message.user.name?.charAt(0).toUpperCase() || 'U'}
           </div>
@@ -31,33 +31,42 @@ export default function MessageBubble({ message, isCurrentUser, showAvatar = tru
           <div className="w-8 shrink-0"></div>
         )
       )}
-      
+
       {/* Message Bubble */}
       <div
-        className={`max-w-[75%] sm:max-w-md px-3 py-1 ${
-          isCurrentUser
+        className={`max-w-[75%] sm:max-w-md ${isSticker ? 'px-2 py-2' : 'px-3 py-1'} ${isCurrentUser
             ? 'bg-blue-500 text-white'
             : theme === 'dark'
               ? 'bg-white/10 text-white border border-white/5'
               : 'bg-gray-200 text-gray-900'
-        }`}
+          }`}
       >
         {!isCurrentUser && showAvatar && (
-          <p className={`text-xs font-semibold mb-px ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-          }`}>
+          <p className={`text-xs font-semibold mb-px ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+            }`}>
             {message.user.name}
           </p>
         )}
-        <p className="wrap-break-word text-base">{message.text}</p>
+        {isSticker ? (
+          <div className="rounded-md overflow-hidden bg-white/90 dark:bg-white/10">
+            <img
+              src={message.stickerUrl}
+              alt={message.stickerId ? `Sticker ${message.stickerId}` : 'Sticker'}
+              className="max-h-48 w-full h-auto object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        ) : (
+          <p className="wrap-break-word text-base">{message.text}</p>
+        )}
         <p
-          className={`text-xs mt-px ${
-            isCurrentUser 
-              ? 'text-blue-100' 
-              : theme === 'dark' 
-                ? 'text-gray-400' 
+          className={`text-xs mt-px ${isCurrentUser
+              ? 'text-blue-100'
+              : theme === 'dark'
+                ? 'text-gray-400'
                 : 'text-gray-500'
-          }`}
+            }`}
         >
           {formatTime(message.timestamp)}
         </p>

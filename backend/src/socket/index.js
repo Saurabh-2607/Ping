@@ -191,6 +191,77 @@ class SocketHandler {
       }
     });
 
+    // Handle sticker message
+    socket.on('send-sticker', async (data) => {
+      try {
+        if (!currentRoom || !currentUser) {
+          socket.emit('error', { message: 'Not in a room' });
+          return;
+        }
+
+        const { stickerId, stickerUrl } = data;
+        
+        if (!stickerId || !stickerUrl) {
+          socket.emit('error', { message: 'Invalid sticker data' });
+          return;
+        }
+
+        // Check room message count (per-room limit)
+        const currentRoomCount = await redisClient.getMessageCount(currentRoom);
+        if (currentRoomCount >= config.chat.maxMessagesPerRoom) {
+          socket.emit('limit-reached', {
+            message: 'Room message limit reached',
+            messageCount: currentRoomCount,
+            maxMessages: config.chat.maxMessagesPerRoom,
+          });
+          return;
+        }
+
+        // Create sticker message object
+        const message = {
+          id: uuidv4(),
+          roomId: currentRoom,
+          type: 'sticker',
+          stickerId: stickerId,
+          stickerUrl: stickerUrl,
+          user: {
+            name: currentUser.name,
+            email: currentUser.email,
+            id: socket.id,
+          },
+          timestamp: new Date().toISOString(),
+        };
+
+        // Increment room message count in Redis
+        const roomMessageCount = await redisClient.incrementMessageCount(currentRoom);
+
+        // Store message in Redis
+        await redisClient.storeMessage(currentRoom, message);
+
+        // Broadcast sticker message to all users in the room
+        this.io.to(currentRoom).emit('new-message', {
+          message,
+          roomMessageCount,
+          messageCount: roomMessageCount,
+          maxMessages: config.chat.maxMessagesPerRoom,
+        });
+
+        // Check if room limit is reached
+        if (roomMessageCount >= config.chat.maxMessagesPerRoom) {
+          this.io.to(currentRoom).emit('limit-reached', {
+            message: 'Room has reached the 50-message limit',
+            messageCount: roomMessageCount,
+            maxMessages: config.chat.maxMessagesPerRoom,
+          });
+        }
+
+        console.log(`Sticker sent in room ${currentRoom}: count ${roomMessageCount}/${config.chat.maxMessagesPerRoom}`);
+      } catch (error) {
+        console.error('Error in send-sticker:', error);
+        socket.emit('error', { message: 'Failed to send sticker' });
+      }
+    });
+
     // Handle typing indicator
     socket.on('typing', () => {
       if (currentRoom && currentUser) {

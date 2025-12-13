@@ -104,7 +104,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
       setMessages((prev) => [...prev, data.message]);
       setRoomMessageCount(data.messageCount || 0);
       setMaxMessages(data.maxMessages || 50);
-      
+
       if (data.messageCount >= data.maxMessages) {
         setIsLimitReached(true);
       }
@@ -177,6 +177,28 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
     setScrollTrigger((s) => s + 1);
   };
 
+  const handleSendSticker = (sticker) => {
+    if (!socketRef.current || isLimitReached || !sticker?.url) {
+      return;
+    }
+
+    socketRef.current.emit('send-sticker', {
+      stickerId: sticker.id || sticker.url,
+      stickerUrl: sticker.url,
+    });
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    if (isTyping) {
+      socketRef.current.emit('stop-typing');
+      setIsTyping(false);
+    }
+
+    setScrollTrigger((s) => s + 1);
+  };
+
   // Handle typing
   const handleInputChange = (e) => {
     setMessageInput(e.target.value);
@@ -235,8 +257,8 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
         {/* Overlay for mobile when sidebar is open */}
         {isSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-10 sm:hidden" 
+          <div
+            className="fixed inset-0 bg-black/50 z-10 sm:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
@@ -281,6 +303,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                 messageInput={messageInput}
                 onChange={handleInputChange}
                 onSend={handleSendMessage}
+                onSendSticker={handleSendSticker}
                 disabled={!socketRef.current}
                 isLimitReached={isLimitReached}
               />
