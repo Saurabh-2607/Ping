@@ -3,6 +3,7 @@ import { createServer } from 'http';
 import cors from 'cors';
 import config from './config/index.js';
 import redisClient from './services/redis.js';
+import dailyRandomDataService from './services/dailyRandomData.js';
 import socketHandler from './socket/index.js';
 import authRoutes from './routes/auth.js';
 import roomRoutes from './routes/rooms.js';
@@ -68,6 +69,9 @@ async function startServer() {
     console.log('Connecting to Redis Cloud...');
     await redisClient.connect();
 
+    // Seed one random record per day in Redis
+    await dailyRandomDataService.start();
+
     // Initialize Socket.IO
     console.log('Initializing Socket.IO...');
     socketHandler.initialize(httpServer);
@@ -93,6 +97,7 @@ async function startServer() {
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('Signing off...');
+  dailyRandomDataService.stop();
   
   // Close Socket.IO connections
   socketHandler.getIO()?.close();
@@ -109,6 +114,7 @@ process.on('SIGTERM', async () => {
 
 process.on('SIGINT', async () => {
   console.log('Signing off...');
+  dailyRandomDataService.stop();
 
   // Close Socket.IO connections
   socketHandler.getIO()?.close();

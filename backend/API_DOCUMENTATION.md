@@ -29,6 +29,7 @@ This is a real-time chat application backend built with:
 - Sticker support for rich media messaging
 - 50-message room limit with progress tracking
 - Session management with Redis
+- Automatic daily random-data entry in Redis
 - Dual storage: Redis (fast) + Convex (persistent)
 
 ### URL-Based Rooms
