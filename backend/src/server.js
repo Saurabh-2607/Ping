@@ -7,6 +7,7 @@ import dailyRandomDataService from './services/dailyRandomData.js';
 import socketHandler from './socket/index.js';
 import authRoutes from './routes/auth.js';
 import roomRoutes from './routes/rooms.js';
+import randomDataRoutes from './routes/randomData.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -15,7 +16,7 @@ const httpServer = createServer(app);
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-auth-token', 'x-session-id'],
 }));
 
 // Handle preflight requests explicitly
@@ -44,6 +45,8 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
+app.use('/api/random-data', randomDataRoutes);
+app.use('/api/seed-random-data', randomDataRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -68,9 +71,6 @@ async function startServer() {
     // Connect to Redis
     console.log('Connecting to Redis Cloud...');
     await redisClient.connect();
-
-    // Seed one random record per day in Redis
-    await dailyRandomDataService.start();
 
     // Initialize Socket.IO
     console.log('Initializing Socket.IO...');

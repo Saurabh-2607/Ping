@@ -431,6 +431,67 @@ Reset message count for a room (admin functionality).
 
 ---
 
+### Push Random Data (Authenticated)
+
+**POST** `/api/random-data` (Alias: `/api/seed-random-data` or `/api/random-data/push`)
+
+Pushes generated random data into the Redis database. Requires an authentication token.
+
+**Headers:**
+- `Authorization`: `Bearer <AUTH_TOKEN>` (or session ID)
+- Or `x-auth-token`: `<AUTH_TOKEN>`
+
+**Response (201 Created):**
+```json
+{
+  "success": true,
+  "message": "Random data successfully pushed to database",
+  "authType": "env_token",
+  "data": {
+    "id": "uuid-v4",
+    "date": "2026-07-21",
+    "generatedAt": "2026-07-21T16:44:00.995Z",
+    "value": 879240,
+    "label": "quiet-echo"
+  }
+}
+```
+
+**Response (401 Unauthorized):**
+```json
+{
+  "success": false,
+  "message": "Unauthorized: Authentication token is required"
+}
+```
+
+---
+
+### Get Random Data
+
+**GET** `/api/random-data`
+
+Retrieves previously pushed random data entries.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "id": "uuid-v4",
+      "date": "2026-07-21",
+      "generatedAt": "2026-07-21T16:44:09.791Z",
+      "value": 923520,
+      "label": "quiet-forest"
+    }
+  ]
+}
+```
+
+---
+
 ## WebSocket Events
 
 Connect to Socket.IO server:
