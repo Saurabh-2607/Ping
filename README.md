@@ -4,7 +4,7 @@
 
 <p align="center">
 Frontend - 
-  <a href="https://ping.headbanger.me">ping.headbanger.me</a><br>
+  <a href="https://ping.srbh.site">ping.srbh.site</a><br>
 Backend -
   <a href="https://chat-app-lzp5.onrender.com"> chat-app-lzp5.onrender.com</a>
 </p>

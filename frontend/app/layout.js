@@ -10,8 +10,16 @@ const textMeOne = Text_Me_One({
 });
 
 export const metadata = {
-  title: "Ping by Saurabh Sharma",
-  description: "Connect instantly with friends and strangers. Share your thoughts, jokes, and memes in real-time chat rooms.",
+  metadataBase: new URL('https://ping.srbh.site'),
+  title: "Ping | Real-Time Speed Chat Rooms",
+  description: "Connect instantly with friends and strangers. Share your thoughts, jokes, and memes in real-time chat rooms on Ping.",
+  openGraph: {
+    title: "Ping | Real-Time Speed Chat Rooms",
+    description: "Connect instantly with friends and strangers in real-time chat rooms.",
+    url: "https://ping.srbh.site",
+    siteName: "Ping",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }) {
