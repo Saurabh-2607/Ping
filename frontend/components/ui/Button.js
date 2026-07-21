@@ -11,7 +11,7 @@ export default function Button({
   
   const variants = {
     primary: 'bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200',
-    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-white dark:hover:bg-gray-200 dark:text-black',
+    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white',
     accent: 'bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 disabled:bg-gray-600 dark:disabled:bg-gray-400',
     danger: 'bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50',
     outline: 'border border-gray-300 hover:bg-gray-50 dark:border-white dark:hover:bg-white/10 dark:text-white',

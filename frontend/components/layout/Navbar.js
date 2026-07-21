@@ -12,7 +12,7 @@ export default function Navbar() {
   const showGetStarted = pathname === '/';
 
   return (
-    <header className="w-full bg-white/80 dark:bg-black/80">
+    <header className="w-full bg-white dark:bg-black dark:border-white/15">
       <Container className="py-4 flex items-center justify-between">
         <div className="flex items-center gap-12">
           {/* Logo */}
@@ -30,7 +30,7 @@ export default function Navbar() {
               <span className="text-xl font-extrabold text-gray-900 dark:text-white">Ping</span>
             </div>
           </Link>
-          
+
           {/* Nav Links */}
         </div>
 

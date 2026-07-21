@@ -214,7 +214,7 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
                         <div className="p-2 flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/20">
                             {isLoadingStickers && stickers.length === 0 && (
                                 <div className="h-full flex flex-col items-center justify-center text-gray-400">
-                                    <div className="w-5 h-5 border-2 border-current border-t-transparent animate-spin mb-2" />
+                                    <div className="w-5 h-5 rounded-full border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin mb-2" />
                                     <span className="text-xs">Loading...</span>
                                 </div>
                             )}

@@ -7,6 +7,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
+import LoadingScreen from '@/components/chat/LoadingScreen';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -109,22 +110,7 @@ export default function LoginPage() {
   };
 
   if (checking) {
-    return (
-      <div className={`flex items-center justify-center min-h-screen transition-colors duration-300 ${
-        theme === 'dark' 
-          ? 'bg-linear-to-br from-gray-900 to-black' 
-          : 'bg-linear-to-br from-blue-50 to-indigo-100'
-      }`}>
-        <div className="text-center">
-          <div className={`inline-block animate-spin rounded-full h-12 w-12 border-b-2 ${
-            theme === 'dark' ? 'border-indigo-400' : 'border-indigo-600'
-          }`} />
-          <p className={`mt-4 text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-            Checking session...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Checking session..." />;
   }
 
   return (

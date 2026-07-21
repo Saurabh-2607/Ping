@@ -9,9 +9,9 @@ export default function ThemeToggle({ className = '' }) {
   return (
     <Button
       onClick={toggleTheme}
-      variant="secondary"
+      variant="ghost"
       size="icon"
-      className={`h-10 w-10 p-0 flex items-center justify-center ${className}`}
+      className={`h-10 w-10 p-0 flex items-center justify-center border border-gray-200 dark:border-white/15 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 ${className}`}
       aria-label="Toggle theme"
       title="Toggle theme"
     >
