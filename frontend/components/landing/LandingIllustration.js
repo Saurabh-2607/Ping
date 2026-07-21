@@ -104,15 +104,22 @@ export default function LandingIllustration() {
   const [showTyping, setShowTyping] = useState(false);
   const [cycle, setCycle] = useState(0);
 
-  // Manage device toggling and sequential message animation
+  // Force mobile view on small screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== 'undefined' && window.innerWidth < 640) {
+        setActiveDevice('mobile');
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Manage sequential message animation cycles
   useEffect(() => {
     let isMounted = true;
     let t1, t2, t3, tSwitch;
-
-    const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
-    if (isSmallScreen && activeDevice !== 'mobile') {
-      setActiveDevice('mobile');
-    }
 
     const runAnimationCycle = () => {
       if (!isMounted) return;

@@ -3,7 +3,7 @@ import 'dotenv/config';
 export default {
   port: process.env.PORT || 3000,
   nodeEnv: process.env.NODE_ENV || 'development',
-  authToken: process.env.AUTH_TOKEN || 'ping_secret_seed_token_2026',
+  authToken: process.env.AUTH_TOKEN || 'muhmelellode',
   
   redis: {
     url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_HOST,
