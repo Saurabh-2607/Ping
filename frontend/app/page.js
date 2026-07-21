@@ -19,7 +19,7 @@ export default function Home() {
       {/* TailwindCSS & Cloudflare Style Hero Grid Pattern with Radial Mask & Glow */}
       <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
         {/* Crisp Linear Grid Lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_65%_55%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff1a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff1a_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_65%_55%_at_50%_0%,#000_70%,transparent_100%)]" />
         
         {/* Ambient Top Glow Spotlight */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[320px] bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
@@ -66,7 +66,7 @@ export default function Home() {
           </div>
 
           {/* Right Section - Illustration Part */}
-          <div className="flex shrink-0 sm:shrink w-full sm:w-1/2 lg:w-7/12 relative flex-col items-center justify-center dark:bg-black py-2 sm:py-0">  
+          <div className="flex shrink-0 sm:shrink w-full sm:w-1/2 lg:w-7/12 relative flex-col items-center justify-center py-2 sm:py-0">  
             <LandingIllustration />
           </div>
         </div>
