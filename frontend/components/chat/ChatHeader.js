@@ -6,6 +6,12 @@ export default function ChatHeader({
   maxMessages,
   onToggleSidebar,
 }) {
+  const totalSlots = Math.max(1, maxMessages || 50);
+  const strokeWidth = 3;
+  const gapWidth = 2;
+  const slotStep = strokeWidth + gapWidth; // 5px per bar slot
+  const svgWidth = totalSlots * slotStep - gapWidth; // Exact total vector width
+
   return (
     <div className="shrink-0 border-b border-gray-200 dark:border-white/15 flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 bg-white dark:bg-black">
       <div className="flex items-center gap-2 sm:gap-3">
@@ -20,26 +26,45 @@ export default function ChatHeader({
         </button>
         <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">{roomId}</h2>
       </div>
-      <div className="flex flex-col items-end gap-1">
-        <span className="text-[10px] sm:text-xs font-bold font-mono text-gray-700 dark:text-gray-300">
+      <div className="flex flex-col items-end gap-1.5">
+        <span className="text-[10px] sm:text-xs font-bold font-mono text-gray-700 dark:text-gray-300 tracking-tight">
           <span className="hidden sm:inline">Message Count : </span>{roomMessageCount}/{maxMessages}
         </span>
-        {/* Progress Bar - Segmented style - hidden on very small screens */}
-        <div className="hidden sm:flex items-center gap-px">
-          {Array.from({ length: Math.max(1, maxMessages) }, (_, i) => (
-            <div
-              key={i}
-              className={`w-0.5 h-3 sm:h-4 transition-all duration-300 ${
-                i < roomMessageCount
-                  ? roomMessageCount >= maxMessages * 0.9
-                    ? 'bg-red-500'
-                    : roomMessageCount >= maxMessages * 0.7
-                    ? 'bg-yellow-500'
-                    : 'bg-purple-500'
-                  : 'bg-gray-300 dark:bg-white/30'
-              }`}
-            ></div>
-          ))}
+        
+        {/* Progress Bar - Vector SVG canvas for 100% mathematically uniform bar width & distance */}
+        <div className="hidden sm:block shrink-0">
+          <svg
+            viewBox={`0 0 ${svgWidth} 16`}
+            className="h-3.5 sm:h-4 w-auto shrink-0 block"
+            style={{ width: `${svgWidth * 0.9}px` }}
+          >
+            {Array.from({ length: totalSlots }, (_, i) => {
+              const isFilled = i < roomMessageCount;
+              let fillClass = 'fill-gray-300 dark:fill-white/30';
+
+              if (isFilled) {
+                if (roomMessageCount >= maxMessages * 0.9) {
+                  fillClass = 'fill-red-500';
+                } else if (roomMessageCount >= maxMessages * 0.7) {
+                  fillClass = 'fill-yellow-500';
+                } else {
+                  fillClass = 'fill-purple-500';
+                }
+              }
+
+              return (
+                <rect
+                  key={i}
+                  x={i * slotStep}
+                  y={0}
+                  width={strokeWidth}
+                  height={16}
+                  rx={0.5}
+                  className={`${fillClass} transition-colors duration-200`}
+                />
+              );
+            })}
+          </svg>
         </div>
       </div>
     </div>
