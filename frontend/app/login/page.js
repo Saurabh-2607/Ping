@@ -8,6 +8,7 @@ import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
 import LoadingScreen from '@/components/chat/LoadingScreen';
+import LoginIllustration from '@/components/login/LoginIllustration';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -115,26 +116,32 @@ export default function LoginPage() {
 
   return (
     <div className="h-full w-full flex overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
-      <Container className="flex flex-1 overflow-hidden">
-        {/* Left Section - Image */}
-        <div className="hidden lg:flex w-1/2 relative flex-col items-end justify-start dark:bg-black">
-          <Image
-            src="/landing.png"
-            alt='Login Image'
-            width={1080}
-            height={1080}
-            className='max-h-screen w-auto object-contain'
-          />
+      <Container className="flex flex-1 overflow-hidden items-stretch">
+        
+        {/* Left Section - Dedicated Login Authentication Illustration */}
+        <div className="hidden lg:flex w-1/2 relative flex-col items-center justify-center dark:bg-black overflow-hidden py-4">
+          <LoginIllustration />
         </div>
 
-        {/* Right Section - Form */}
-        <div className="w-full lg:w-1/2 p-8 flex flex-col justify-center relative overflow-hidden">
+        {/* Right Section - Login Form */}
+        <div className="w-full lg:w-1/2 p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden">
           {/* Main Content */}
-          <main className="max-w-xl my-auto">
+          <main className="w-full max-w-md mx-auto my-auto">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
-                Welcome to <span className="text-primary">Ping</span>
+              <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+                Welcome to{' '}
+                <span className="inline-flex items-center gap-1.5 text-primary">
+                  <Image
+                    src="/ping-logo.svg"
+                    width={32}
+                    height={32}
+                    className="object-contain inline-block align-middle"
+                    alt="Ping Logo"
+                    priority
+                  />
+                  Ping
+                </span>
               </h1>
               <p className="text-base lg:text-lg text-gray-500 dark:text-gray-400">Sign in to join the conversation</p>
             </div>
@@ -270,9 +277,18 @@ export default function LoginPage() {
             )}
           </main>
 
-          {/* Footer */}
-          <footer id="footer" className="text-sm font-semibold text-gray-800 dark:text-white mt-auto pt-8">
-            © {new Date().getFullYear()} by Ping. All Rights Reserved
+          {/* Footer with Portfolio Link */}
+          <footer id="footer" className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 mt-auto pt-8 flex flex-wrap items-center gap-1">
+            <span>© {new Date().getFullYear()} by Ping.</span>
+            <span>Made by</span>
+            <a
+              href="https://srbh.site"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-600 dark:text-emerald-400 hover:underline font-bold transition-colors"
+            >
+              srbh.site
+            </a>
           </footer>
         </div>
       </Container>
