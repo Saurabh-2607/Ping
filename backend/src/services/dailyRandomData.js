@@ -51,8 +51,8 @@ class DailyRandomDataService {
     }
 
     const payload = this.generatePayload(now);
-    await redisClient.getClient().set(redisKey, JSON.stringify(payload));
-    await redisClient.getClient().sAdd(DAILY_RANDOM_DATA_INDEX_KEY, redisKey);
+    await redisClient.getClient().set(redisKey, payload);
+    await redisClient.getClient().sadd(DAILY_RANDOM_DATA_INDEX_KEY, redisKey);
     console.log(`Inserted daily random data for ${dateKey}`);
     return true;
   }
