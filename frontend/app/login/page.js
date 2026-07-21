@@ -115,8 +115,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-full w-full flex overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
-      <Container className="flex flex-1 overflow-hidden items-stretch">
+    <div className="relative h-full w-full flex overflow-hidden transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white isolate">
+      
+      {/* TailwindCSS & Cloudflare Style Hero Grid Pattern with Radial Mask & Glow */}
+      <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
+        {/* Crisp Linear Grid Lines */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_65%_55%_at_50%_0%,#000_70%,transparent_100%)]" />
+        
+        {/* Ambient Top Glow Spotlight */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[320px] bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
+      </div>
+
+      <Container className="relative z-10 flex flex-1 overflow-hidden items-stretch">
         
         {/* Left Section - Dedicated Login Authentication Illustration */}
         <div className="hidden lg:flex w-1/2 relative flex-col items-center justify-center dark:bg-black overflow-hidden py-4">

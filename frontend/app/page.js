@@ -14,8 +14,18 @@ export default function Home() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col overflow-auto transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
-      <Container className="flex flex-col sm:flex-row flex-1 items-center sm:items-stretch overflow-hidden py-4 sm:py-6 gap-6 sm:gap-8">
+    <div className="relative h-full w-full flex flex-col overflow-auto transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white isolate">
+      
+      {/* TailwindCSS & Cloudflare Style Hero Grid Pattern with Radial Mask & Glow */}
+      <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
+        {/* Crisp Linear Grid Lines */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_65%_55%_at_50%_0%,#000_70%,transparent_100%)]" />
+        
+        {/* Ambient Top Glow Spotlight */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[320px] bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
+      </div>
+
+      <Container className="relative z-10 flex flex-col sm:flex-row flex-1 items-center sm:items-stretch overflow-hidden py-4 sm:py-6 gap-6 sm:gap-8">
         
         {/* Left Section - Perfectly Fitted Hero Content */}
         <div className="w-full sm:w-1/2 lg:w-5/12 px-2 sm:px-4 md:px-6 flex flex-col justify-between items-center sm:items-start relative shrink-0 sm:shrink sm:overflow-hidden min-h-[420px] sm:min-h-0">
@@ -68,7 +78,7 @@ export default function Home() {
           </footer>
         </div>
 
-        {/* Right Section - Illustration Part (Untouched) */}
+        {/* Right Section - Illustration Part */}
         <div className="flex shrink-0 sm:shrink w-full sm:w-1/2 lg:w-7/12 relative flex-col items-center justify-center dark:bg-black sm:overflow-hidden py-2 sm:py-0">  
           <LandingIllustration />
         </div>
