@@ -25,63 +25,65 @@ export default function Home() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[320px] bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
       </div>
 
-      <Container className="relative z-10 flex flex-col sm:flex-row flex-1 items-center sm:items-stretch overflow-hidden py-4 sm:py-6 gap-6 sm:gap-8">
+      <Container className="relative z-10 flex flex-col justify-between flex-1 overflow-auto sm:overflow-hidden py-4 sm:py-6">
         
-        {/* Left Section - Perfectly Fitted Hero Content */}
-        <div className="w-full sm:w-1/2 lg:w-5/12 px-2 sm:px-4 md:px-6 flex flex-col justify-between items-center sm:items-start relative shrink-0 sm:shrink sm:overflow-hidden min-h-[420px] sm:min-h-0">
+        {/* Main Content Layout Grid */}
+        <div className="flex flex-col sm:flex-row flex-1 items-center sm:items-stretch gap-6 sm:gap-8 my-auto">
           
-          {/* Main Hero Text Content */}
-          <main className="w-full max-w-lg my-auto pt-4 sm:pt-0 flex flex-col justify-center text-center sm:text-left">
-            <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-4 sm:mb-6 tracking-tight text-gray-900 dark:text-white">
-              Stay Connected with{' '}
-              <span className="inline-flex items-center gap-1.5 align-baseline">
-                <Image
-                  src="/ping-logo.svg"
-                  width={36}
-                  height={36}
-                  className="object-contain inline-block align-middle w-7 h-7 sm:w-9 sm:h-9"
-                  alt="Ping Logo"
-                  priority
-                />
-                Ping
-              </span>
-              , anywhere, anytime.
-            </h1>
+          {/* Left Section - Hero Content */}
+          <div className="w-full sm:w-1/2 lg:w-5/12 px-2 sm:px-4 md:px-6 flex flex-col justify-center items-center sm:items-start relative shrink-0 sm:shrink">
+            <main className="w-full max-w-lg my-auto py-2 sm:py-0 flex flex-col justify-center text-center sm:text-left">
+              <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-4 sm:mb-6 tracking-tight text-gray-900 dark:text-white">
+                Stay Connected with{' '}
+                <span className="inline-flex items-center gap-1.5 align-baseline">
+                  <Image
+                    src="/ping-logo.svg"
+                    width={36}
+                    height={36}
+                    className="object-contain inline-block align-middle w-7 h-7 sm:w-9 sm:h-9"
+                    alt="Ping Logo"
+                    priority
+                  />
+                  Ping
+                </span>
+                , anywhere, anytime.
+              </h1>
 
-            <p className="text-base sm:text-lg mb-6 sm:mb-8 max-w-md leading-relaxed text-gray-600 dark:text-gray-400 mx-auto sm:mx-0 font-normal">
-              Connect instantly with friends and strangers. Share your thoughts, jokes, and memes in real-time chat rooms.
-            </p>
+              <p className="text-base sm:text-lg mb-6 sm:mb-8 max-w-md leading-relaxed text-gray-600 dark:text-gray-400 mx-auto sm:mx-0 font-normal">
+                Connect instantly with friends and strangers. Share your thoughts, jokes, and memes in real-time chat rooms.
+              </p>
 
-            <div className="flex flex-col items-center sm:items-start gap-4">
-              <Button
-                onClick={handleGetStarted}
-                size="lg"
-                className="px-8 py-3.5 text-base font-bold shadow-sm hover:shadow-md transition-all"
-              >
-                Start Chatting
-              </Button>
-            </div>
-          </main>
+              <div className="flex flex-col items-center sm:items-start gap-4">
+                <Button
+                  onClick={handleGetStarted}
+                  size="lg"
+                  className="px-8 py-3.5 text-base font-bold shadow-sm hover:shadow-md transition-all"
+                >
+                  Start Chatting
+                </Button>
+              </div>
+            </main>
+          </div>
 
-          {/* Footer - Portfolio Link to srbh.site */}
-          <footer id="footer" className="w-full pt-4 pb-2 text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 flex flex-wrap items-center justify-center sm:justify-start gap-1">
-            <span>© {new Date().getFullYear()} by Ping.</span>
-            <span>Made by</span>
-            <a
-              href="https://srbh.site"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 underline underline-offset-2 font-bold transition-colors"
-            >
-              srbh.site
-            </a>
-          </footer>
+          {/* Right Section - Illustration Part */}
+          <div className="flex shrink-0 sm:shrink w-full sm:w-1/2 lg:w-7/12 relative flex-col items-center justify-center dark:bg-black py-2 sm:py-0">  
+            <LandingIllustration />
+          </div>
         </div>
 
-        {/* Right Section - Illustration Part */}
-        <div className="flex shrink-0 sm:shrink w-full sm:w-1/2 lg:w-7/12 relative flex-col items-center justify-center dark:bg-black sm:overflow-hidden py-2 sm:py-0">  
-          <LandingIllustration />
-        </div>
+        {/* Footer - Always at the bottom of the page */}
+        <footer id="footer" className="w-full pt-6 pb-2 text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 flex flex-wrap items-center justify-center sm:justify-start gap-1 shrink-0 px-2 sm:px-4">
+          <span>© {new Date().getFullYear()} by Ping.</span>
+          <span>Made by</span>
+          <a
+            href="https://srbh.site"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 underline underline-offset-2 font-bold transition-colors"
+          >
+            srbh.site
+          </a>
+        </footer>
       </Container>
     </div>
   );
