@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 
 const ThemeContext = createContext({
   theme: 'light',
@@ -25,11 +26,37 @@ export default function ThemeProvider({ children }) {
   }, []);
 
   const toggleTheme = () => {
-    setTheme((prev) => {
-      const nextTheme = prev === 'light' ? 'dark' : 'light';
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+
+    const applyThemeChange = () => {
+      setTheme(nextTheme);
       document.documentElement.setAttribute('data-theme', nextTheme);
       localStorage.setItem('theme', nextTheme);
-      return nextTheme;
+    };
+
+    if (typeof document === 'undefined' || !document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      applyThemeChange();
+      return;
+    }
+
+    const transition = document.startViewTransition(() => {
+      flushSync(() => {
+        applyThemeChange();
+      });
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        [
+          { clipPath: 'inset(0 0 100% 0)' },
+          { clipPath: 'inset(0 0 0 0)' }
+        ],
+        {
+          duration: 650,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)'
+        }
+      );
     });
   };
 
