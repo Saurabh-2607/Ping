@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Container from '@/components/ui/Container';
 import Image from 'next/image';
+import LandingIllustration from '@/components/landing/LandingIllustration';
 
 export default function Home() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function Home() {
     <div className="h-full w-full flex flex-col overflow-auto transition-colors duration-300 bg-white text-gray-900 dark:bg-black dark:text-white">
       <Container className="flex flex-col sm:flex-row flex-1 items-center sm:items-stretch overflow-hidden">
         {/* Left Section */}
-        <div className="w-full sm:w-1/2 px-4 sm:px-6 md:pr-8 md:pl-0 flex flex-col items-center sm:items-start relative shrink-0 sm:shrink sm:overflow-hidden">
+        <div className="w-full sm:w-5/12 lg:w-4/12 px-4 sm:px-6 md:pr-8 md:pl-0 flex flex-col items-center sm:items-start relative shrink-0 sm:shrink sm:overflow-hidden">
           {/* Main Content */}
           <main className="max-w-xl pt-8 sm:pt-0 sm:flex-1 flex flex-col justify-center text-center sm:text-left">
             <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold leading-[1.1] mb-4 tracking-tight text-gray-900 dark:text-white">
@@ -50,15 +51,9 @@ export default function Home() {
           </footer>
         </div>
 
-        {/* Right Section */}
-        <div className="flex shrink-0 sm:shrink w-full sm:w-1/2 relative flex-col items-center sm:items-end justify-center sm:justify-start dark:bg-black sm:overflow-hidden">  
-          <Image
-          src="/landing.png"
-          alt='Landing Image'
-          width={1080}
-          height={1080}
-          className='max-h-[60vh] max-w-[90vw] sm:max-h-screen sm:max-w-full w-auto object-contain'
-          />
+        {/* Right Section - Expanded width for illustration */}
+        <div className="flex shrink-0 sm:shrink w-full sm:w-7/12 lg:w-8/12 flex-1 relative flex-col items-center justify-center dark:bg-black sm:overflow-hidden py-4 sm:py-0">  
+          <LandingIllustration />
         </div>
       </Container>
     </div>
