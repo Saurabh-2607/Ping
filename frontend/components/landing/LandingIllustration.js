@@ -102,18 +102,24 @@ export default function LandingIllustration() {
   const [activeDevice, setActiveDevice] = useState('mobile'); // 'mobile' | 'laptop'
   const [visibleMessages, setVisibleMessages] = useState([]);
   const [showTyping, setShowTyping] = useState(false);
+  const [cycle, setCycle] = useState(0);
 
-  // Manage device toggling and sequential message animation (Only after device finishes entry!)
+  // Manage device toggling and sequential message animation
   useEffect(() => {
     let isMounted = true;
     let t1, t2, t3, tSwitch;
+
+    const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
+    if (isSmallScreen && activeDevice !== 'mobile') {
+      setActiveDevice('mobile');
+    }
 
     const runAnimationCycle = () => {
       if (!isMounted) return;
       setVisibleMessages([]);
       setShowTyping(false);
 
-      // Message 1: Triggers ONLY after device entry & laptop lid opening finishes (~950ms)
+      // Message 1: Triggers ONLY after device entry (~950ms)
       t1 = setTimeout(() => {
         if (!isMounted) return;
         setVisibleMessages([SAMPLE_MESSAGES[0]]);
@@ -141,7 +147,15 @@ export default function LandingIllustration() {
       // Device Switch Timer (~9.2 seconds)
       tSwitch = setTimeout(() => {
         if (!isMounted) return;
-        setActiveDevice((prev) => (prev === 'mobile' ? 'laptop' : 'mobile'));
+        const mobileView = typeof window !== 'undefined' && window.innerWidth < 640;
+        if (mobileView) {
+          // Stay on mobile animation for small screens
+          setActiveDevice('mobile');
+          setCycle((c) => c + 1);
+        } else {
+          setActiveDevice((prev) => (prev === 'mobile' ? 'laptop' : 'mobile'));
+          setCycle((c) => c + 1);
+        }
       }, 9200);
     };
 
@@ -154,10 +168,10 @@ export default function LandingIllustration() {
       clearTimeout(t3);
       clearTimeout(tSwitch);
     };
-  }, [activeDevice]);
+  }, [cycle]);
 
   return (
-    <div className="relative w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[460px] md:max-w-[500px] mx-auto py-2 sm:py-4 flex items-center justify-center select-none min-h-[490px] sm:min-h-[540px] overflow-hidden">
+    <div className="relative w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[460px] md:max-w-[500px] mx-auto py-2 sm:py-4 flex items-center justify-center select-none min-h-[460px] xs:min-h-[490px] sm:min-h-[540px] overflow-hidden">
       
       {/* Motion.dev Pulsing Signal Rings */}
       {[0, 1.8].map((delay, index) => (
