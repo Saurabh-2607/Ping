@@ -16,7 +16,6 @@ export default function Sidebar({
   const router = useRouter();
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState('');
-  const [error, setError] = useState('');
 
   const handleCreateRoom = () => {
     const roomNameToUse = newRoomName.trim() || `room-${Math.random().toString(36).slice(2, 8)}`;
@@ -28,11 +27,9 @@ export default function Sidebar({
         router.push(`/room/${result.data.roomId}`);
       } else {
         console.error('Failed to create room:', result.message);
-        setError(result.message || 'Failed to create room');
       }
     }).catch((err) => {
       console.error('Error creating room:', err);
-      setError('Error creating room: ' + err.message);
     });
   };
 

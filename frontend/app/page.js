@@ -5,11 +5,8 @@ import Button from '@/components/ui/Button';
 import Container from '@/components/ui/Container';
 import Image from 'next/image';
 
-const randomRoom = () => `room-${Math.random().toString(36).slice(2, 8)}`;
-
 export default function Home() {
   const router = useRouter();
-
 
   const handleGetStarted = () => {
     router.push('/login');
@@ -41,17 +38,9 @@ export default function Home() {
               <Button
                 onClick={handleGetStarted}
                 size="lg"
-                className=""
               >
                 Start Chatting
               </Button>
-
-              {/* Arrow pointing to button */}
-              <div className="hidden text-red-400 transform -rotate-12">
-                <svg width="60" height="20" viewBox="0 0 60 20" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M58 10H2M2 10L10 2M2 10L10 18" />
-                </svg>
-              </div>
             </div>
           </main>
 
