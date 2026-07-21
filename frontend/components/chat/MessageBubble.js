@@ -49,6 +49,7 @@ export default function MessageBubble({ message, isCurrentUser, showAvatar = tru
         )}
         {isSticker ? (
           <div className="rounded-md overflow-hidden bg-white/90 dark:bg-white/10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={message.stickerUrl}
               alt={message.stickerId ? `Sticker ${message.stickerId}` : 'Sticker'}

@@ -33,38 +33,42 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
   const [activeUsers, setActiveUsers] = useState([]);
   const [error, setError] = useState('');
   const [availableRooms, setAvailableRooms] = useState([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+      return false;
+    }
+    return true;
+  });
+  const [scrollTrigger, setScrollTrigger] = useState(0);
+  const [isConnected, setIsConnected] = useState(false);
 
   const typingTimeoutRef = useRef(null);
   const socketRef = useRef(null);
 
-  const fetchAvailableRooms = async () => {
-    try {
-      const result = await getAllRooms();
-      if (result.success && result.data) {
-        const roomsArray = Array.isArray(result.data) ? result.data : (result.data.rooms || []);
-        setAvailableRooms(roomsArray);
-      } else {
-        setAvailableRooms([]);
-      }
-    } catch (err) {
-      console.error('Failed to fetch rooms:', err);
-      setAvailableRooms([]);
-    }
-  };
-
-  const [scrollTrigger, setScrollTrigger] = useState(0);
-
   useEffect(() => {
-    // eslint-disable-next-line
-    fetchAvailableRooms();
-    const interval = setInterval(fetchAvailableRooms, 10000);
+    let isMounted = true;
+    const loadRooms = async () => {
+      try {
+        const result = await getAllRooms();
+        if (isMounted) {
+          const roomsArray = result.success && result.data
+            ? (Array.isArray(result.data) ? result.data : (result.data.rooms || []))
+            : [];
+          setAvailableRooms(roomsArray);
+        }
+      } catch (err) {
+        console.error('Failed to fetch rooms:', err);
+        if (isMounted) setAvailableRooms([]);
+      }
+    };
 
-    if (window.innerWidth < 640) {
-      setIsSidebarOpen(false);
-    }
+    void loadRooms();
+    const interval = setInterval(loadRooms, 10000);
 
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -80,6 +84,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
 
     newSocket.on('connect', () => {
       setIsLoading(false);
+      setIsConnected(true);
 
       newSocket.emit('join-room', {
         roomId: roomId,
@@ -142,11 +147,13 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
       setError('Connection failed. Trying to reconnect...');
     });
 
-    newSocket.on('disconnect', (reason) => {
+    newSocket.on('disconnect', () => {
+      setIsConnected(false);
       setError('Disconnected from server');
     });
 
     return () => {
+      setIsConnected(false);
       newSocket.disconnect();
     };
   }, [sessionData, roomId]);
@@ -290,7 +297,7 @@ export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoom
                 onChange={handleInputChange}
                 onSend={handleSendMessage}
                 onSendSticker={handleSendSticker}
-                disabled={!socketRef.current}
+                disabled={!isConnected}
                 isLimitReached={isLimitReached}
               />
             )}

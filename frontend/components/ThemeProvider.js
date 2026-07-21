@@ -13,17 +13,16 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    // Sync initial theme from document or localStorage
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === 'undefined') return 'light';
     const attrTheme = document.documentElement.getAttribute('data-theme');
     const savedTheme = localStorage.getItem('theme');
-    const initialTheme = attrTheme || savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    
-    setTheme(initialTheme);
-    document.documentElement.setAttribute('data-theme', initialTheme);
-  }, []);
+    return attrTheme || savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';

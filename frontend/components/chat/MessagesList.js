@@ -25,7 +25,6 @@ export default function MessagesList({ messages, sessionData, otherUsersTyping, 
     if (scrollTrigger > 0) {
       scrollToBottom();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollTrigger]);
 
   return (

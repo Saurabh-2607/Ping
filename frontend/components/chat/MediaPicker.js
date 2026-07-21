@@ -234,6 +234,7 @@ export default function MediaPicker({ onStickerSelect, onEmojiSelect, onClose })
                                             onClick={() => handleStickerClick(sticker)}
                                             className="relative w-full group overflow-hidden bg-gray-100 dark:bg-white/5 outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/30 break-inside-avoid mb-1.5"
                                         >
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
                                                 src={sticker.url}
                                                 alt="Sticker"
