@@ -30,7 +30,7 @@ export default function LoginPage() {
           const parsed = JSON.parse(session);
           const result = await validateSession(parsed.sessionId);
           if (result.success) {
-            router.replace('/room/default');
+            router.replace('/room/victor');
             return;
           }
           localStorage.removeItem('chatSession');
@@ -46,7 +46,7 @@ export default function LoginPage() {
 
   const handleAuthSuccess = (session) => {
     localStorage.setItem('chatSession', JSON.stringify(session));
-    router.replace('/room/default');
+    router.replace('/room/victor');
   };
 
   const handleRequestOTP = async (e) => {

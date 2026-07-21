@@ -5,15 +5,46 @@ import socketHandler from '../socket/index.js';
 
 const router = express.Router();
 
+function formatRoomName(name) {
+  if (!name) return '';
+  return name
+    .trim()
+    .split(/[\s-_]+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
 // Create a new room
 router.post('/create', async (req, res) => {
   try {
-    const { roomId, roomName } = req.body;
+    const { roomId: rawRoomId, roomName: rawRoomName } = req.body;
 
-    if (!roomId || !roomName) {
+    if (!rawRoomId || !rawRoomName) {
       return res.status(400).json({
         success: false,
         message: 'Room ID and room name are required',
+      });
+    }
+
+    const roomId = slugify(rawRoomId);
+    const roomName = formatRoomName(rawRoomName);
+
+    if (!roomId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Room ID is invalid after sanitization',
       });
     }
 
@@ -50,7 +81,17 @@ router.post('/create', async (req, res) => {
 // Get all available rooms with active user counts
 router.get('/', async (req, res) => {
   try {
-    const roomIds = await redisClient.getAllRooms();
+    let roomIds = await redisClient.getAllRooms();
+
+    // Auto-seed cool default rooms if none exist
+    if (!roomIds || roomIds.length === 0) {
+      const coolDefaults = ['victor', 'phoenix', 'matrix', 'cyber', 'pulse'];
+      for (const room of coolDefaults) {
+        await redisClient.createRoom(room, room.charAt(0).toUpperCase() + room.slice(1));
+      }
+      roomIds = await redisClient.getAllRooms();
+    }
+
     const rooms = [];
 
     for (const roomId of roomIds) {

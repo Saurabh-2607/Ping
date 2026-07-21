@@ -20,7 +20,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 export default function ChatScreen({ sessionData, onLogout, roomId: incomingRoomId }) {
   const router = useRouter();
   const { theme } = useTheme();
-  const roomId = incomingRoomId || 'default';
+  const roomId = incomingRoomId || 'victor';
 
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');

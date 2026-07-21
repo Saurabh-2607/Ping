@@ -9,7 +9,7 @@ import { validateSession } from '@/lib/api';
 export default function RoomPage() {
   const params = useParams();
   const router = useRouter();
-  const roomId = params?.roomId || 'default';
+  const roomId = params?.roomId || 'victor';
   const [sessionData, setSessionData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 

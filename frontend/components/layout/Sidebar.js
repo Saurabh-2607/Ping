@@ -18,7 +18,12 @@ export default function Sidebar({
   const [newRoomName, setNewRoomName] = useState('');
 
   const handleCreateRoom = () => {
-    const roomNameToUse = newRoomName.trim() || `room-${Math.random().toString(36).slice(2, 8)}`;
+    const COOL_NAMES = [
+      'Victor', 'Phoenix', 'Cyber', 'Matrix', 'Pulse', 'Nexus', 'Solaris', 'Apex', 'Vortex', 'Titan',
+      'Vanguard', 'Zephyr', 'Spectre', 'Hyperion', 'Aurora', 'Quantum', 'Echo', 'Valkyrie', 'Storm', 'Phantom'
+    ];
+    const randomCool = COOL_NAMES[Math.floor(Math.random() * COOL_NAMES.length)] + '-' + Math.floor(100 + Math.random() * 999);
+    const roomNameToUse = newRoomName.trim() || randomCool;
     setIsCreatingRoom(false);
     setNewRoomName('');
     
